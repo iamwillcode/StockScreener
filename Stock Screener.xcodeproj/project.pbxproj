@@ -7,23 +7,41 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8428FB9B2613A72100C186CB /* StockBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8428FB9A2613A72100C186CB /* StockBuilder.swift */; };
+		8428FB9F2614EBF300C186CB /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8428FB9E2614EBF300C186CB /* Constants.swift */; };
 		84A784AD25FE87CC000E3FDE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A784AC25FE87CC000E3FDE /* AppDelegate.swift */; };
 		84A784AF25FE87CC000E3FDE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A784AE25FE87CC000E3FDE /* SceneDelegate.swift */; };
-		84A784B125FE87CC000E3FDE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A784B025FE87CC000E3FDE /* ViewController.swift */; };
 		84A784B425FE87CC000E3FDE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84A784B225FE87CC000E3FDE /* Main.storyboard */; };
 		84A784B625FE87CF000E3FDE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 84A784B525FE87CF000E3FDE /* Assets.xcassets */; };
 		84A784B925FE87CF000E3FDE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84A784B725FE87CF000E3FDE /* LaunchScreen.storyboard */; };
+		84A784CC260792EC000E3FDE /* StockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A784CB260792EB000E3FDE /* StockData.swift */; };
+		84A784CF26079303000E3FDE /* StockNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A784CE26079303000E3FDE /* StockNetwork.swift */; };
+		84A784D72607948B000E3FDE /* StockListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A784D62607948A000E3FDE /* StockListViewController.swift */; };
+		84A784ED2607968C000E3FDE /* StockCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A784EB2607968C000E3FDE /* StockCell.swift */; };
+		84A784EE2607968C000E3FDE /* StockCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84A784EC2607968C000E3FDE /* StockCell.xib */; };
+		84A78503260A6BD6000E3FDE /* StockError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A78502260A6BD6000E3FDE /* StockError.swift */; };
+		84A78507260A7E8A000E3FDE /* StockModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A78506260A7E8A000E3FDE /* StockModel.swift */; };
+		84C719392610EEC10000D0C2 /* StockFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C719382610EEC10000D0C2 /* StockFormatter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8428FB9A2613A72100C186CB /* StockBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockBuilder.swift; sourceTree = "<group>"; };
+		8428FB9E2614EBF300C186CB /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		84A784A925FE87CC000E3FDE /* Stock Screener.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Stock Screener.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		84A784AC25FE87CC000E3FDE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		84A784AE25FE87CC000E3FDE /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		84A784B025FE87CC000E3FDE /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		84A784B325FE87CC000E3FDE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		84A784B525FE87CF000E3FDE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		84A784B825FE87CF000E3FDE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		84A784BA25FE87CF000E3FDE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		84A784CB260792EB000E3FDE /* StockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockData.swift; sourceTree = "<group>"; };
+		84A784CE26079303000E3FDE /* StockNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockNetwork.swift; sourceTree = "<group>"; };
+		84A784D62607948A000E3FDE /* StockListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockListViewController.swift; sourceTree = "<group>"; };
+		84A784EB2607968C000E3FDE /* StockCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockCell.swift; sourceTree = "<group>"; };
+		84A784EC2607968C000E3FDE /* StockCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = StockCell.xib; sourceTree = "<group>"; };
+		84A78502260A6BD6000E3FDE /* StockError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockError.swift; sourceTree = "<group>"; };
+		84A78506260A7E8A000E3FDE /* StockModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockModel.swift; sourceTree = "<group>"; };
+		84C719382610EEC10000D0C2 /* StockFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockFormatter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,13 +76,46 @@
 			children = (
 				84A784AC25FE87CC000E3FDE /* AppDelegate.swift */,
 				84A784AE25FE87CC000E3FDE /* SceneDelegate.swift */,
-				84A784B025FE87CC000E3FDE /* ViewController.swift */,
-				84A784B225FE87CC000E3FDE /* Main.storyboard */,
+				84A784C52601406C000E3FDE /* Models */,
+				84A784C626014079000E3FDE /* Views */,
+				84A784C326014055000E3FDE /* Controllers */,
 				84A784B525FE87CF000E3FDE /* Assets.xcassets */,
+				8428FB9E2614EBF300C186CB /* Constants.swift */,
 				84A784B725FE87CF000E3FDE /* LaunchScreen.storyboard */,
 				84A784BA25FE87CF000E3FDE /* Info.plist */,
 			);
 			path = "Stock Screener";
+			sourceTree = "<group>";
+		};
+		84A784C326014055000E3FDE /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				84A784D62607948A000E3FDE /* StockListViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		84A784C52601406C000E3FDE /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				84A784CE26079303000E3FDE /* StockNetwork.swift */,
+				8428FB9A2613A72100C186CB /* StockBuilder.swift */,
+				84A784CB260792EB000E3FDE /* StockData.swift */,
+				84A78502260A6BD6000E3FDE /* StockError.swift */,
+				84A78506260A7E8A000E3FDE /* StockModel.swift */,
+				84C719382610EEC10000D0C2 /* StockFormatter.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		84A784C626014079000E3FDE /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				84A784B225FE87CC000E3FDE /* Main.storyboard */,
+				84A784EB2607968C000E3FDE /* StockCell.swift */,
+				84A784EC2607968C000E3FDE /* StockCell.xib */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -126,6 +177,7 @@
 			files = (
 				84A784B925FE87CF000E3FDE /* LaunchScreen.storyboard in Resources */,
 				84A784B625FE87CF000E3FDE /* Assets.xcassets in Resources */,
+				84A784EE2607968C000E3FDE /* StockCell.xib in Resources */,
 				84A784B425FE87CC000E3FDE /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -137,8 +189,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				84A784B125FE87CC000E3FDE /* ViewController.swift in Sources */,
+				84A78507260A7E8A000E3FDE /* StockModel.swift in Sources */,
+				8428FB9F2614EBF300C186CB /* Constants.swift in Sources */,
+				84A784CF26079303000E3FDE /* StockNetwork.swift in Sources */,
+				84C719392610EEC10000D0C2 /* StockFormatter.swift in Sources */,
+				84A78503260A6BD6000E3FDE /* StockError.swift in Sources */,
+				8428FB9B2613A72100C186CB /* StockBuilder.swift in Sources */,
+				84A784ED2607968C000E3FDE /* StockCell.swift in Sources */,
 				84A784AD25FE87CC000E3FDE /* AppDelegate.swift in Sources */,
+				84A784D72607948B000E3FDE /* StockListViewController.swift in Sources */,
+				84A784CC260792EC000E3FDE /* StockData.swift in Sources */,
 				84A784AF25FE87CC000E3FDE /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -216,7 +276,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -271,7 +331,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -289,14 +349,15 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 86Y95KX8Y4;
 				INFOPLIST_FILE = "Stock Screener/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.elieff.Stock-Screener";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.elieff.iOS-Stock-Screener";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -308,14 +369,15 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 86Y95KX8Y4;
 				INFOPLIST_FILE = "Stock Screener/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.elieff.Stock-Screener";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.elieff.iOS-Stock-Screener";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
