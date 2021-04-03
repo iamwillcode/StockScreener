@@ -1,15 +1,11 @@
-//
-//  StockBuilder.swift
-//  Stock Screener
-//
-//  Created by Admin on 30.03.2021.
-//
-
 import UIKit
 
 protocol StockBuilderDelegate {
+    
     func didUpdateStockItem(_ stockBuilder: StockBuilder, _ stockItem: StockModel)
+    
     func didEndBuilding(_ stockBuilder: StockBuilder, _ amount: Int)
+    
 }
 
 struct StockBuilder {
@@ -19,20 +15,16 @@ struct StockBuilder {
     var delegate: StockBuilderDelegate?
     
     let trendsAPI = "https://cloud.iexapis.com/stable/stock/market/list/mostactive"
-    let trendsLimit = 10
-    let trendsToken = "pk_8f50c7473cf041fdbe7f9bbafb968391"
+    let trendsAmount = 10
+    let trendsAPIKey = "pk_8f50c7473cf041fdbe7f9bbafb968391"
     
-    let infoAPI = "https://finnhub.io/api/v1/"
-    let infoToken = "c1ccrp748v6scqmqri1g"
-    
-    let searchAPI = "https://api.polygon.io/v2/reference/tickers?sort=ticker&market=STOCKS&search=m&perpage=20&page=1&apiKey="
-    let searchToken = "rrDRZXdAdH8R4mbEUkzUhKlg5CZ8xGQX"
+    let mainAPI = "https://finnhub.io/api/v1/" // 60 calls per minute limit
+    let mainAPIKey = "c1ccrp748v6scqmqri1g"
     
     let logoURL = "https://storage.googleapis.com/iex/api/logos/"
-
     
     func getTrends() {
-        let URL = "\(trendsAPI)?listLimit=\(trendsLimit)&token=\(trendsToken)"
+        let URL = "\(trendsAPI)?listLimit=\(trendsAmount)&token=\(trendsAPIKey)"
         
         DispatchQueue.global(qos: .utility).async {
             
@@ -44,18 +36,39 @@ struct StockBuilder {
                     print(error)
                 case .success (let stockData):
                     for element in stockData {
-//                        let stockItem = StockModel(ticker: element.symbol, companyName: element.companyName)
-//                        self.delegate?.didUpdateStockItem(self, stockItem)
                         self.delegate?.didEndBuilding(self, stockData.count)
-                        buildStockItem(for: element, amount: stockData.count)
+                        buildStockItem(for: element.symbol, element.companyName, amount: stockData.count)
                     }
                 }
             }
         }
     }
     
+    func searchStock(for ticker: String) {
+        let URL = "\(mainAPI)search?q=\(ticker)&token=\(mainAPIKey)"
+        
+        DispatchQueue.global(qos: .utility).async {
+            
+            let result: Result<StockData, StockError> = stockNetwork.performRequest(with: URL)
+            
+            DispatchQueue.main.async {
+                switch result {
+                case .failure(let error):
+                    print(error)
+                case .success (let stockData):
+                    if let searchResult = stockData.result {
+                    for element in searchResult {
+                        self.delegate?.didEndBuilding(self, searchResult.count)
+                        buildStockItem(for: element.symbol, element.description, amount: searchResult.count)
+                    }
+                }
+                }
+            }
+        }
+    }
+    
     func getPrice(for ticker: String, completion: @escaping (Double, Double) -> Void) {
-        let URL = "\(infoAPI)quote?symbol=\(ticker)&token=\(infoToken)"
+        let URL = "\(mainAPI)quote?symbol=\(ticker)&token=\(mainAPIKey)"
         
         DispatchQueue.global(qos: .utility).async {
             
@@ -85,7 +98,6 @@ struct StockBuilder {
         }
     }
     
-    
     func getLogo(for ticker: String) -> UIImage? {
         let urlString = "\(logoURL)\(ticker).png"
         if let logoURL = URL(string: urlString) {
@@ -98,33 +110,20 @@ struct StockBuilder {
         return nil
     }
     
-    func buildStockItem(for ticker: StockData.Ticker, amount: Int) {
+    func buildStockItem(for ticker: String, _ companyName: String, amount: Int) {
         let queue = DispatchQueue(label: "stock builder")
         let group = DispatchGroup()
         
         var logo: UIImage?
-        var currentPrice: Double?
-        var previousPrice: Double?
-//        
-//        group.enter()
-//        queue.async {
-//            getPrice(for: ticker.symbol) { (c, pc) in
-//                currentPrice = c
-//                previousPrice = pc
-//                print("Price \(ticker) OK")
-//                group.leave()
-//            }
-//        }
         
         group.enter()
         queue.async {
-            logo = getLogo(for: ticker.symbol)
-            print("Logo \(ticker) OK")
+            logo = getLogo(for: ticker)
             group.leave()
         }
         
         group.notify(queue: queue) {
-            let stockItem = StockModel(ticker: ticker.symbol, companyName: ticker.companyName, logo: logo, currentPrice: currentPrice, previousPrice: previousPrice)
+            let stockItem = StockModel(ticker: ticker, companyName: companyName, logo: logo)
             self.delegate?.didUpdateStockItem(self, stockItem)
             self.delegate?.didEndBuilding(self, amount)
         }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="xkS-lM-1EE">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="jt8-QL-Nax">
     <device id="retina6_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
@@ -13,8 +13,8 @@
         <scene sceneID="YcJ-Zs-YwO">
             <objects>
                 <navigationController id="jt8-QL-Nax" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="cHQ-f1-N5S">
-                        <rect key="frame" x="0.0" y="44" width="428" height="44"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" largeTitles="YES" id="cHQ-f1-N5S">
+                        <rect key="frame" x="0.0" y="44" width="428" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -23,18 +23,18 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ek8-Ws-Ure" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1783" y="-198"/>
+            <point key="canvasLocation" x="-1658" y="-198"/>
         </scene>
-        <!--Stock List View Controller-->
+        <!--Stock View Controller-->
         <scene sceneID="VRZ-H3-Gmn">
             <objects>
-                <viewController id="xkS-lM-1EE" customClass="StockListViewController" customModule="Stock_Screener" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="xkS-lM-1EE" customClass="StockViewController" customModule="Stock_Screener" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="2IO-Xv-1x3">
                         <rect key="frame" x="0.0" y="0.0" width="428" height="926"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="47W-7m-Pfr">
-                                <rect key="frame" x="0.0" y="144" width="428" height="32"/>
+                                <rect key="frame" x="0.0" y="88" width="428" height="32"/>
                                 <segments>
                                     <segment title="Trending"/>
                                     <segment title="Favourite"/>
@@ -43,12 +43,8 @@
                                     <action selector="indexChanged:" destination="xkS-lM-1EE" eventType="valueChanged" id="Gkb-7f-6FC"/>
                                 </connections>
                             </segmentedControl>
-                            <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="iXT-t4-3fM">
-                                <rect key="frame" x="0.0" y="88" width="428" height="56"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </searchBar>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="pbQ-t0-rMX">
-                                <rect key="frame" x="0.0" y="175" width="428" height="717"/>
+                                <rect key="frame" x="0.0" y="119" width="428" height="773"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </tableView>
                         </subviews>
@@ -57,26 +53,39 @@
                         <constraints>
                             <constraint firstItem="pbQ-t0-rMX" firstAttribute="leading" secondItem="2IO-Xv-1x3" secondAttribute="leading" id="9wr-nW-YR9"/>
                             <constraint firstAttribute="trailing" secondItem="pbQ-t0-rMX" secondAttribute="trailing" id="AHH-gK-UNP"/>
-                            <constraint firstItem="iXT-t4-3fM" firstAttribute="top" secondItem="q9d-mf-iRn" secondAttribute="top" id="NxK-61-WP0"/>
+                            <constraint firstItem="47W-7m-Pfr" firstAttribute="top" secondItem="q9d-mf-iRn" secondAttribute="top" id="CFQ-SU-cvy"/>
                             <constraint firstItem="47W-7m-Pfr" firstAttribute="trailing" secondItem="q9d-mf-iRn" secondAttribute="trailing" id="VMl-Gt-K4Z"/>
                             <constraint firstItem="47W-7m-Pfr" firstAttribute="leading" secondItem="q9d-mf-iRn" secondAttribute="leading" id="Yaz-9G-IXK"/>
-                            <constraint firstAttribute="trailing" secondItem="iXT-t4-3fM" secondAttribute="trailing" id="exY-8e-Xfi"/>
                             <constraint firstItem="47W-7m-Pfr" firstAttribute="bottom" secondItem="pbQ-t0-rMX" secondAttribute="top" id="gvn-2m-LoG"/>
-                            <constraint firstItem="47W-7m-Pfr" firstAttribute="top" secondItem="iXT-t4-3fM" secondAttribute="bottom" id="rDt-WC-1C1"/>
-                            <constraint firstItem="iXT-t4-3fM" firstAttribute="leading" secondItem="2IO-Xv-1x3" secondAttribute="leading" id="smC-v1-Qh3"/>
                             <constraint firstItem="pbQ-t0-rMX" firstAttribute="bottom" secondItem="q9d-mf-iRn" secondAttribute="bottom" id="ybI-RU-93N"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="8V4-pK-epk"/>
+                    <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="8V4-pK-epk"/>
                     <connections>
-                        <outlet property="searchBar" destination="iXT-t4-3fM" id="Hjl-FZ-nVl"/>
                         <outlet property="segments" destination="47W-7m-Pfr" id="pE5-dV-PKI"/>
                         <outlet property="tableView" destination="pbQ-t0-rMX" id="ef6-n7-UmR"/>
+                        <segue destination="kgh-bj-1fI" kind="show" identifier="showDetail" id="OVX-qQ-5Go"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zCJ-iZ-nzb" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-857" y="-198"/>
+            <point key="canvasLocation" x="-761" y="-198"/>
+        </scene>
+        <!--Detail View Controller-->
+        <scene sceneID="NfO-Zr-8o9">
+            <objects>
+                <viewController storyboardIdentifier="DetailViewController" id="kgh-bj-1fI" customClass="DetailViewController" customModule="Stock_Screener" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="aY1-Tl-pAV">
+                        <rect key="frame" x="0.0" y="0.0" width="428" height="926"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="uk4-gb-FOU"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" largeTitleDisplayMode="always" id="Fy4-hq-jID"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="vpA-u1-yc2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="388" y="-198"/>
         </scene>
     </scenes>
     <resources>

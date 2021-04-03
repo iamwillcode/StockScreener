@@ -6,6 +6,7 @@ struct StockFormatter {
         let formatter = NumberFormatter()
         formatter.usesGroupingSeparator = true
         formatter.maximumFractionDigits = 2
+        formatter.minimumFractionDigits = 2
         
         guard let p = price else { return "" }
         
@@ -18,6 +19,7 @@ struct StockFormatter {
         formatter.positivePrefix = "+"
         formatter.usesGroupingSeparator = true
         formatter.maximumFractionDigits = 2
+        formatter.minimumFractionDigits = 2
         
         guard let d = delta else { return "" }
         

@@ -2,8 +2,6 @@ import UIKit
 
 class StockCell: UITableViewCell {
     
-    var callbackOnButton : (()->())?
-    
     @IBOutlet var ticker: UILabel!
     @IBOutlet var companyName: UILabel!
     @IBOutlet var companyLogo: UIImageView!
@@ -12,19 +10,20 @@ class StockCell: UITableViewCell {
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
     @IBOutlet var favouriteButton: UIButton!
     
+    var callbackOnFavouriteButton : (()->())?
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        roundLogo()
+        logoSetup()
         activityIndicatorSetup()
-
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
     
-    func roundLogo() {
+    func logoSetup() {
         companyLogo.layer.cornerRadius = 12
         companyLogo.layer.masksToBounds = true
     }
@@ -34,7 +33,7 @@ class StockCell: UITableViewCell {
     }
     
     @IBAction func setFavourite(_ sender: UIButton) {
-        self.callbackOnButton?()
+        self.callbackOnFavouriteButton?()
     }
     
 }
