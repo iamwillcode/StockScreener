@@ -30,6 +30,7 @@ struct StockModel {
     private let formatter = StockFormatter()
     
     var formattedPrice: String? {
+        guard currentPrice != 0 else {return "-"}
         return formatter.formatPrice(currentPrice)
     }
     

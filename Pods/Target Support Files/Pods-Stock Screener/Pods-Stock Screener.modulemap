@@ -1,0 +1,6 @@
+framework module Pods_Stock_Screener {
+  umbrella header "Pods-Stock Screener-umbrella.h"
+
+  export *
+  module * { export * }
+}

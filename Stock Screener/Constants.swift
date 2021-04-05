@@ -10,11 +10,14 @@ import Foundation
 struct K {
     
     static let defaultLogo = "StockDefaultLogo"
+    static let stockCell = "StockCell"
+    static let chartCell = "StockChartCell"
     
     struct Colors {
         struct Brand {
             static let main = "MainBrandColor"
             static let secondary = "SecondaryBrandColor"
+            static let ternary = "TernaryBrandColor"
         }
         
         struct Background {

@@ -10,9 +10,9 @@ struct StockNetwork {
         
         guard let url = URL(string: urlString) else { return .failure(.urlError) }
         
-        URLSession.shared.dataTask(with: url) { (data, response, error) in
+        let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
             if error != nil {
-                result = .failure(.sessionTaskError)
+                result = .failure(.sessionTaskError(error))
             }
             guard let safeData = data else {
                 result = .failure(.requestError)
@@ -26,7 +26,9 @@ struct StockNetwork {
                 result = .failure(.decodeError)
             }
             semaphore.signal()
-        }.resume()
+        }
+        
+        task.resume()
         
         _ = semaphore.wait(wallTimeout: .distantFuture)
         

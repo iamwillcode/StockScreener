@@ -2,17 +2,26 @@ import UIKit
 
 class StockViewController: UIViewController {
     
+    // MARK: - IBOutlets
+    
     @IBOutlet var tableView: UITableView!
     @IBOutlet var segments: UISegmentedControl!
     
-    var stock = [String: StockModel]()
-    var favourites = [String: StockModel]()
+    // MARK: - Private Properties
     
-    var searchController: UISearchController!
-    var resultsTableController: ResultsTableController!
+    private let tableViewRefreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(refreshPrice(sender:)), for: .valueChanged)
+        return refreshControl
+    }()
     
+    private var trending = [String: StockModel]()
+    private var searchController: UISearchController!
+    private var resultsTableController: ResultsTableController!
     private var formatter = StockFormatter()
     private var stockBuilder = StockBuilder()
+    
+    // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,31 +30,16 @@ class StockViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         
-        tableView.register(UINib(nibName: "StockCell", bundle: nil), forCellReuseIdentifier: "StockCell")
-        
-        setupUI()
-        
-        stockBuilder.getTrends()
+        tableView.register(UINib(nibName: K.stockCell, bundle: nil), forCellReuseIdentifier: K.stockCell)
+        tableView.refreshControl = tableViewRefreshControl
         
         resultsTableController = ResultsTableController()
         resultsTableController.delegate = self
         
-        searchController = UISearchController(searchResultsController: resultsTableController)
-        searchController.searchResultsUpdater = self
-        searchController.searchBar.autocapitalizationType = .none
-        searchController.searchBar.searchTextField.placeholder = NSLocalizedString("Ticker or company name", comment: "")
-        searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.returnKeyType = .done
+        setupUI()
+        setupSearchController()
         
-        navigationItem.searchController = searchController
-        
-        navigationItem.hidesSearchBarWhenScrolling = false
-        
-        searchController.delegate = self
-        
-        searchController.searchBar.delegate = self
-        
-        definesPresentationContext = true
+        stockBuilder.getTrends()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -57,17 +51,90 @@ class StockViewController: UIViewController {
         }
     }
     
+    // MARK: - Private Methods
+    
     private func setupUI() {
         tableView.separatorStyle = .none
-        navigationItem.title = "Stock Screener"
+        tableView.backgroundColor = UIColor(named: K.Colors.Background.main)
+        
+        view.backgroundColor = UIColor(named: K.Colors.Brand.ternary)
+        
+        segments.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .selected)
+        segments.setTitleTextAttributes([.foregroundColor: UIColor.black], for: .normal)
+        segments.selectedSegmentTintColor = UIColor(named: K.Colors.Brand.main)
+        segments.layer.borderWidth = 0
+        segments.backgroundColor = UIColor(named: K.Colors.Brand.ternary)
+
+        navigationItem.title = "Stock Screener 📈"
+
+    
+        self.navigationController!.navigationBar.tintColor = UIColor(named: K.Colors.Brand.main)
+        
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor(named: K.Colors.Brand.ternary)
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.black]
+        navigationItem.standardAppearance = appearance
+        navigationItem.scrollEdgeAppearance = appearance
+   
+        let backBarButtton = UIBarButtonItem(title: "Back", style: .plain, target: nil, action: nil)
+        navigationItem.backBarButtonItem = backBarButtton
     }
     
+    private func setupSearchController() {
+        searchController = UISearchController(searchResultsController: resultsTableController)
+        searchController.searchResultsUpdater = self
+        searchController.searchBar.autocapitalizationType = .none
+        searchController.searchBar.searchTextField.placeholder = NSLocalizedString("Ticker or company name", comment: "")
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.returnKeyType = .search
+        definesPresentationContext = true
+        
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
+        
+        searchController.delegate = self
+        searchController.searchBar.delegate = self
+    }
+    
+    private func selectStockAsFavourite(for stock: StockModel) {
+        let ticker = stock.ticker
+        
+        var selectedStock = stock
+        selectedStock.isFavourite = !selectedStock.isFavourite
+        
+        if self.trending[ticker] != nil {
+            self.trending[ticker]!.isFavourite = !self.trending[ticker]!.isFavourite
+        }
+        
+        if selectedStock.isFavourite {
+            StockFavourite.shared.addToFavourite(stock: selectedStock)
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        } else {
+            StockFavourite.shared.removeFromFavourite(stock: selectedStock)
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        }
+    }
+    
+    @objc private func refreshPrice(sender: UIRefreshControl) {
+        stockBuilder.updatePrice(for: source)
+        sender.endRefreshing()
+    }
+    
+    @objc private func performStockSearch() {
+        resultsTableController.searchStock()
+    }
+    
+    // MARK: - IBActions
     
     @IBAction func indexChanged(_ sender: UISegmentedControl) {
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
-        //        stockBuilder.updatePrice(for: source)
     }
     
 }
@@ -79,9 +146,9 @@ extension StockViewController: UITableViewDataSource {
     var source: [String: StockModel] {
         get {
             if segments.selectedSegmentIndex == 0 {
-                return self.stock
+                return self.trending
             } else {
-                return self.favourites
+                return StockFavourite.shared.favourite
             }
         }
     }
@@ -92,9 +159,9 @@ extension StockViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let stockList = [StockModel](source.values).sorted{$0.ticker < $1.ticker}
-        var stockItem = stockList[indexPath.row]
+        let stockItem = stockList[indexPath.row]
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "StockCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: K.stockCell, for: indexPath)
             as! StockCell
         
         cell.ticker.text = stockItem.ticker
@@ -105,13 +172,15 @@ extension StockViewController: UITableViewDataSource {
         if let delta = stockItem.delta {
             if delta >= 0 {
                 cell.dayDelta.textColor = UIColor(named: K.Colors.Common.green)
-            } else {
+            } else if delta < 0 {
                 cell.dayDelta.textColor = UIColor(named: K.Colors.Common.red)
+            } else {
+                cell.dayDelta.textColor = .black
             }
         }
         
-        switch cell.currentPrice.text {
-        case "":
+        switch stockItem.currentPrice {
+        case nil:
             cell.activityIndicator.startAnimating()
         default:
             cell.activityIndicator.stopAnimating()
@@ -124,7 +193,9 @@ extension StockViewController: UITableViewDataSource {
         }
         
         if indexPath.row % 2 != 0 {
-            cell.backgroundColor = UIColor(named: K.Colors.Background.main)
+            cell.backgroundColor = UIColor(named: K.Colors.Background.secondary)
+        } else {
+            cell.backgroundColor = .white
         }
         
         if stockItem.isFavourite {
@@ -135,24 +206,8 @@ extension StockViewController: UITableViewDataSource {
             cell.favouriteButton.setImage(image, for: .normal)
         }
         
-        //TODO: - CrossView Favourites Manager
         cell.callbackOnFavouriteButton = {
-            let ticker = stockItem.ticker
-            if self.stock[ticker] != nil {
-                self.stock[ticker]!.isFavourite = !self.stock[ticker]!.isFavourite
-            }
-            stockItem.isFavourite = !stockItem.isFavourite
-            if stockItem.isFavourite {
-                self.favourites[stockItem.ticker] = stockItem
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
-            } else {
-                self.favourites[stockItem.ticker] = nil
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
-            }
+            self.selectStockAsFavourite(for: stockItem)
         }
         
         return cell
@@ -163,46 +218,77 @@ extension StockViewController: UITableViewDataSource {
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let stockList = [StockModel](source.values).sorted{$0.ticker < $1.ticker}
+        let stockItem = stockList[indexPath.row]
+        
+        StockFavourite.shared.checkIfTickerIsFavourite(stock: stockItem) { (result) in
+            if result {
+                let ticker = stockItem.ticker
+                self.trending[ticker]?.isFavourite = true
+            }
+        }
+    }
+    
 }
 
 //MARK: - UITableViewDelegate
 
-extension StockViewController: UITableViewDelegate {
-}
+extension StockViewController: UITableViewDelegate {}
 
 //MARK: - StockBuilderDelegate
 
 extension StockViewController: StockBuilderDelegate {
     
     func didUpdateStockItem(_ stockBuilder: StockBuilder, _ stockItem: StockModel) {
-        let queue = DispatchQueue(label: "update stock dictionary", qos: .userInitiated)
+        let queue = Config.Queues.stockDictionaryAccess
         
         queue.sync {
             let key = stockItem.ticker
-            if self.stock[key] != nil {
-                if let currentPrice = stockItem.currentPrice, self.stock[key]!.currentPrice != currentPrice {
-                    self.stock[key]!.currentPrice = currentPrice
+            if self.trending[key] != nil {
+                if let currentPrice = stockItem.currentPrice, self.trending[key]!.currentPrice != currentPrice {
+                    self.trending[key]!.currentPrice = currentPrice
                 }
-                if let previousPrice = stockItem.previousPrice, self.stock[key]!.previousPrice != previousPrice {
-                    self.stock[key]!.previousPrice = previousPrice
+                if let previousPrice = stockItem.previousPrice, self.trending[key]!.previousPrice != previousPrice {
+                    self.trending[key]!.previousPrice = previousPrice
                 }
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
                 }
             }
             else {
-                print(stockItem)
-                self.stock[key] = stockItem
+                self.trending[key] = stockItem
             }
         }
     }
     
     func didEndBuilding(_ stockBuilder: StockBuilder, _ amount: Int) {
-        if amount == stock.count {
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
+        let queue = Config.Queues.stockDictionaryAccess
+        
+        queue.sync {
+            if amount == trending.count {
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
+                stockBuilder.updatePrice(for: trending)
             }
-            stockBuilder.updatePrice(for: stock)
+        }
+    }
+    
+    func didFailWithError(_ stockBuilder: StockBuilder, error: StockError) {
+        switch error {
+        case .tickerPriceError(let ticker):
+            print(error.localizedDescription)
+            if trending[ticker] != nil {
+                if trending[ticker]!.currentPrice == nil {
+                    trending[ticker]!.currentPrice = 0
+                }
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
+            }
+        default:
+            print(error.localizedDescription)
         }
     }
     
@@ -213,15 +299,33 @@ extension StockViewController: StockBuilderDelegate {
 extension StockViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if searchBar.text!.isEmpty {
-            //TODO: - Visible lable "No tickers for display"
+        if let searchQuery = searchController.searchBar.text, searchQuery.isEmpty == false {
+            if let resultsController = searchController.searchResultsController as? ResultsTableController {
+                let formattedQuery = searchQuery.replacingOccurrences(of: "[^A-Za-z0-9.,/-()*@!+]+", with: "", options: .regularExpression)
+                resultsController.searchQuery = formattedQuery
+                NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(self.performStockSearch), object: searchBar)
+                perform(#selector(self.performStockSearch), with: searchBar, afterDelay: 0.75)
+            }
         } else {
-            //TODO: - lable "No tickers for display" hides
+            if let resultsController = searchController.searchResultsController as? ResultsTableController {
+                NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(self.performStockSearch), object: searchBar)
+                resultsController.clearResults()
+            }
         }
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        // User tapped the Done button in the keyboard.
+        if let searchQuery = searchController.searchBar.text, searchQuery.isEmpty == false {
+            if let resultsController = searchController.searchResultsController as? ResultsTableController {
+                let formattedQuery = searchQuery.replacingOccurrences(of: "[^A-Za-z0-9.,/-()*@!+]+", with: "", options: .regularExpression)
+                resultsController.searchQuery = formattedQuery
+                NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(self.performStockSearch), object: searchBar)
+                performStockSearch()
+            }
+        }
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchController.dismiss(animated: true, completion: nil)
         searchBar.text = ""
     }
@@ -236,6 +340,12 @@ extension StockViewController: UISearchControllerDelegate {
         searchController.showsSearchResultsController = true
     }
     
+    func didDismissSearchController(_ searchController: UISearchController) {
+        if let resultsController = searchController.searchResultsController as? ResultsTableController {
+            resultsController.clearResults()
+        }
+    }
+    
 }
 
 // MARK: - UISearchResultsUpdating
@@ -243,17 +353,8 @@ extension StockViewController: UISearchControllerDelegate {
 extension StockViewController: UISearchResultsUpdating {
     
     func updateSearchResults(for searchController: UISearchController) {
-        
-        if let searchQuery = searchController.searchBar.text, searchQuery.isEmpty == false {
-        
-            var searchResult = stockBuilder.searchStock(for: searchQuery)
-        
-//        if let resultsController = searchController.searchResultsController as? ResultsTableController {
-//            resultsController.result = result
-//            resultsController.tableView.reloadData()
-//        }
     }
-    }
+    
 }
 
 // MARK: - ResultsTableControllerDelegate
@@ -263,14 +364,6 @@ extension StockViewController: ResultsTableControllerDelegate {
     func didSelectStock(stock: StockModel) {
         let detailVC = DetailViewController.detailViewControllerForStock(stock)
         navigationController?.pushViewController(detailVC, animated: true)
-    }
-    
-    func didSetAsFavourite(stock: StockModel) {
-        favourites[stock.ticker] = stock
-    }
-    
-    func didUnsetAsFavourite(stock: StockModel) {
-        favourites[stock.ticker] = nil
     }
     
 }

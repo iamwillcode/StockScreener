@@ -6,6 +6,8 @@ protocol StockBuilderDelegate {
     
     func didEndBuilding(_ stockBuilder: StockBuilder, _ amount: Int)
     
+    func didFailWithError(_ stockBuilder: StockBuilder, error: StockError)
+    
 }
 
 struct StockBuilder {
@@ -14,17 +16,8 @@ struct StockBuilder {
     
     var delegate: StockBuilderDelegate?
     
-    let trendsAPI = "https://cloud.iexapis.com/stable/stock/market/list/mostactive"
-    let trendsAmount = 10
-    let trendsAPIKey = "pk_8f50c7473cf041fdbe7f9bbafb968391"
-    
-    let mainAPI = "https://finnhub.io/api/v1/" // 60 calls per minute limit
-    let mainAPIKey = "c1ccrp748v6scqmqri1g"
-    
-    let logoURL = "https://storage.googleapis.com/iex/api/logos/"
-    
     func getTrends() {
-        let URL = "\(trendsAPI)?listLimit=\(trendsAmount)&token=\(trendsAPIKey)"
+        let URL = "\(Config.Api.trends)?listLimit=\(Config.Api.trendsAmount)&token=\(Config.Api.trendsKey)"
         
         DispatchQueue.global(qos: .utility).async {
             
@@ -33,7 +26,7 @@ struct StockBuilder {
             DispatchQueue.main.async {
                 switch result {
                 case .failure(let error):
-                    print(error)
+                    self.delegate?.didFailWithError(self, error: error)
                 case .success (let stockData):
                     for element in stockData {
                         self.delegate?.didEndBuilding(self, stockData.count)
@@ -44,8 +37,8 @@ struct StockBuilder {
         }
     }
     
-    func searchStock(for ticker: String) {
-        let URL = "\(mainAPI)search?q=\(ticker)&token=\(mainAPIKey)"
+    func search(for ticker: String) {
+        let URL = "\(Config.Api.main)search?q=\(ticker)&token=\(Config.Api.mainKey)"
         
         DispatchQueue.global(qos: .utility).async {
             
@@ -54,21 +47,39 @@ struct StockBuilder {
             DispatchQueue.main.async {
                 switch result {
                 case .failure(let error):
-                    print(error)
+                    self.delegate?.didFailWithError(self, error: error)
                 case .success (let stockData):
-                    if let searchResult = stockData.result {
-                    for element in searchResult {
-                        self.delegate?.didEndBuilding(self, searchResult.count)
-                        buildStockItem(for: element.symbol, element.description, amount: searchResult.count)
+                    
+                    if let searchResult: [StockData.Result] = stockData.result {
+                        var filteredResult = [StockData.Result]()
+                        
+                        for element in searchResult {
+                            guard element.type == "Common Stock" else {continue}
+                            filteredResult.append(element)
+                        }
+                        
+                        if filteredResult.count == 0 {
+                            let error = StockError.searchError(ticker)
+                            self.delegate?.didFailWithError(self, error: error)
+                        } else if filteredResult.count >= 10 {
+                            filteredResult = [StockData.Result](filteredResult[0...9])
+                        }
+                        
+                        for element in filteredResult {
+                            self.delegate?.didEndBuilding(self, filteredResult.count)
+                            buildStockItem(for: element.symbol, element.description, amount: filteredResult.count)
+                        }
+                    } else {
+                        let error = StockError.searchError(ticker)
+                        self.delegate?.didFailWithError(self, error: error)
                     }
-                }
                 }
             }
         }
     }
     
     func getPrice(for ticker: String, completion: @escaping (Double, Double) -> Void) {
-        let URL = "\(mainAPI)quote?symbol=\(ticker)&token=\(mainAPIKey)"
+        let URL = "\(Config.Api.main)quote?symbol=\(ticker)&token=\(Config.Api.mainKey)"
         
         DispatchQueue.global(qos: .utility).async {
             
@@ -77,10 +88,13 @@ struct StockBuilder {
             DispatchQueue.main.async {
                 switch result {
                 case .failure(let error):
-                    print(error)
+                    self.delegate?.didFailWithError(self, error: error)
                 case .success (let stockData):
                     if let currentPrice = stockData.c, let previousPrice = stockData.pc {
                         completion(currentPrice, previousPrice)
+                    } else {
+                        let error = StockError.tickerPriceError(ticker)
+                        self.delegate?.didFailWithError(self, error: error)
                     }
                 }
             }
@@ -98,12 +112,38 @@ struct StockBuilder {
         }
     }
     
+    func getChartData (for ticker: String, completion: @escaping ([Double]) -> Void) {
+        let timestamp = Int(Date().timeIntervalSince1970)
+        let timestampMonthAgo = timestamp - 2592000
+        
+        let URL = "\(Config.Api.main)stock/candle?symbol=\(ticker)&resolution=D&from=\(timestampMonthAgo)&to=\(timestamp)&token=\(Config.Api.mainKey)"
+        
+        DispatchQueue.global(qos: .utility).async {
+            
+            let result: Result<StockData.ChartData, StockError> = stockNetwork.performRequest(with: URL)
+            
+            DispatchQueue.main.async {
+                switch result {
+                case .failure (let error):
+                    self.delegate?.didFailWithError(self, error: error)
+                case .success (let stockData):
+                    if let chartData = stockData.h {
+                        completion(chartData)
+                    }
+                }
+            }
+        }
+    }
+    
     func getLogo(for ticker: String) -> UIImage? {
-        let urlString = "\(logoURL)\(ticker).png"
+        let urlString = "\(Config.Api.logo)\(ticker).png"
         if let logoURL = URL(string: urlString) {
             if let data = try? Data(contentsOf: logoURL) {
                 if let image = UIImage(data: data) {
                     return image
+                } else {
+                    let error = StockError.tickerLogoError(ticker)
+                    self.delegate?.didFailWithError(self, error: error)
                 }
             }
         }
@@ -111,7 +151,7 @@ struct StockBuilder {
     }
     
     func buildStockItem(for ticker: String, _ companyName: String, amount: Int) {
-        let queue = DispatchQueue(label: "stock builder")
+        let queue = Config.Queues.builderTask
         let group = DispatchGroup()
         
         var logo: UIImage?

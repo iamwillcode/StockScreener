@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="jt8-QL-Nax">
-    <device id="retina6_7" orientation="portrait" appearance="light"/>
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
@@ -14,7 +14,7 @@
             <objects>
                 <navigationController id="jt8-QL-Nax" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" largeTitles="YES" id="cHQ-f1-N5S">
-                        <rect key="frame" x="0.0" y="44" width="428" height="96"/>
+                        <rect key="frame" x="0.0" y="44" width="414" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -30,11 +30,11 @@
             <objects>
                 <viewController id="xkS-lM-1EE" customClass="StockViewController" customModule="Stock_Screener" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="2IO-Xv-1x3">
-                        <rect key="frame" x="0.0" y="0.0" width="428" height="926"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="47W-7m-Pfr">
-                                <rect key="frame" x="0.0" y="88" width="428" height="32"/>
+                                <rect key="frame" x="0.0" y="140" width="414" height="32"/>
                                 <segments>
                                     <segment title="Trending"/>
                                     <segment title="Favourite"/>
@@ -44,7 +44,7 @@
                                 </connections>
                             </segmentedControl>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="pbQ-t0-rMX">
-                                <rect key="frame" x="0.0" y="119" width="428" height="773"/>
+                                <rect key="frame" x="0.0" y="171" width="414" height="691"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </tableView>
                         </subviews>
@@ -60,7 +60,7 @@
                             <constraint firstItem="pbQ-t0-rMX" firstAttribute="bottom" secondItem="q9d-mf-iRn" secondAttribute="bottom" id="ybI-RU-93N"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="8V4-pK-epk"/>
+                    <navigationItem key="navigationItem" largeTitleDisplayMode="always" id="8V4-pK-epk"/>
                     <connections>
                         <outlet property="segments" destination="47W-7m-Pfr" id="pE5-dV-PKI"/>
                         <outlet property="tableView" destination="pbQ-t0-rMX" id="ef6-n7-UmR"/>
@@ -76,12 +76,27 @@
             <objects>
                 <viewController storyboardIdentifier="DetailViewController" id="kgh-bj-1fI" customClass="DetailViewController" customModule="Stock_Screener" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="aY1-Tl-pAV">
-                        <rect key="frame" x="0.0" y="0.0" width="428" height="926"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="tgS-XL-guB">
+                                <rect key="frame" x="0.0" y="140" width="414" height="722"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="uk4-gb-FOU"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="uk4-gb-FOU" firstAttribute="bottom" secondItem="tgS-XL-guB" secondAttribute="bottom" id="EpF-8e-dMo"/>
+                            <constraint firstItem="tgS-XL-guB" firstAttribute="top" secondItem="uk4-gb-FOU" secondAttribute="top" id="K8B-9L-y9u"/>
+                            <constraint firstItem="tgS-XL-guB" firstAttribute="leading" secondItem="uk4-gb-FOU" secondAttribute="leading" id="bQb-HX-Y9S"/>
+                            <constraint firstItem="tgS-XL-guB" firstAttribute="trailing" secondItem="uk4-gb-FOU" secondAttribute="trailing" id="ko0-Ux-8sP"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" largeTitleDisplayMode="always" id="Fy4-hq-jID"/>
+                    <connections>
+                        <outlet property="tableView" destination="tgS-XL-guB" id="rmQ-ih-8u5"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vpA-u1-yc2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
