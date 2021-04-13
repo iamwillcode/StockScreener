@@ -26,7 +26,7 @@ class ResultsTableController: UITableViewController {
         
         stockBuilder.delegate = self
         
-        self.tableView.register(UINib(nibName: K.stockCell, bundle: nil), forCellReuseIdentifier: K.stockCell)
+        self.tableView.register(UINib(nibName: K.Cells.stock, bundle: nil), forCellReuseIdentifier: K.Cells.stock)
         
         setupUI()
     }
@@ -39,7 +39,7 @@ class ResultsTableController: UITableViewController {
         let stockList = [StockModel](result.values).sorted{$0.ticker < $1.ticker}
         var stockItem = stockList[indexPath.row]
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: K.stockCell, for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: K.Cells.stock, for: indexPath)
             as! StockCell
         
         cell.ticker.text = stockItem.ticker
@@ -178,7 +178,6 @@ extension ResultsTableController: StockBuilderDelegate {
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
                 }
-                print(result.keys.sorted())
                 stockBuilder.updatePrice(for: result)
             }
         }

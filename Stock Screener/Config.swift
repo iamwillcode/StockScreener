@@ -18,6 +18,9 @@ struct Config {
         static let mainKey = "c1ccrp748v6scqmqri1g"
         
         static let logo = "https://storage.googleapis.com/iex/api/logos/"
+        
+        static let news = "https://cloud.iexapis.com/stable/stock/"
+        static let newsKey = "pk_8f50c7473cf041fdbe7f9bbafb968391"
     }
 
     struct Queues {

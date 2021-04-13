@@ -31,7 +31,7 @@
                             <stackView opaque="NO" contentMode="scaleToFill" distribution="equalCentering" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="SpV-jh-OXa" userLabel="Top Info">
                                 <rect key="frame" x="0.0" y="0.0" width="244" height="24"/>
                                 <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="3" translatesAutoresizingMaskIntoConstraints="NO" id="fu7-7b-vg1">
+                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="3" translatesAutoresizingMaskIntoConstraints="NO" id="fu7-7b-vg1" userLabel="Ticker Section">
                                         <rect key="frame" x="0.0" y="0.0" width="80" height="24"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yI6-Ni-EkG">
@@ -104,6 +104,7 @@
                     </stackView>
                     <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="I22-4f-TLx">
                         <rect key="frame" x="296" y="11" width="20" height="20"/>
+                        <color key="color" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </activityIndicatorView>
                 </subviews>
                 <constraints>
@@ -121,12 +122,16 @@
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
                 <outlet property="activityIndicator" destination="I22-4f-TLx" id="Bze-pO-OVh"/>
+                <outlet property="cellBottomInfoView" destination="QGQ-t0-WnX" id="0cR-Qr-toJ"/>
+                <outlet property="cellInfoView" destination="qew-rT-POc" id="8Q4-D1-LBV"/>
+                <outlet property="cellTopInfoView" destination="SpV-jh-OXa" id="C3N-LN-RPP"/>
                 <outlet property="companyLogo" destination="Hzm-3A-N3D" id="Rm9-eS-luJ"/>
                 <outlet property="companyName" destination="FdR-VM-601" id="84x-gS-xmA"/>
                 <outlet property="currentPrice" destination="bQN-Rc-W0K" id="fgm-UG-p0t"/>
                 <outlet property="dayDelta" destination="CgN-5b-eWX" id="1Vw-Uc-ESI"/>
                 <outlet property="favouriteButton" destination="GNf-dK-9Ej" id="T6p-Zt-GUV"/>
                 <outlet property="ticker" destination="yI6-Ni-EkG" id="XMl-8x-nXu"/>
+                <outlet property="tickerSectionView" destination="fu7-7b-vg1" id="et6-WT-gxg"/>
             </connections>
             <point key="canvasLocation" x="-195.6521739130435" y="93.080357142857139"/>
         </tableViewCell>

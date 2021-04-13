@@ -1,16 +1,28 @@
 import UIKit
 import Charts
 
-class StockChartCell: UITableViewCell {
+final class StockChartCell: UITableViewCell {
     
     //MARK: - Public properties
     
     lazy var stockChartView: LineChartView = {
-        let chartView = LineChartView()
+        let chartView = ChartView()
         chartView.leftAxis.enabled = false
         chartView.xAxis.enabled = false
+        chartView.rightAxis.enabled = false
         chartView.noDataText = "Waiting for the chart data..."
+        chartView.legend.enabled = false
+        chartView.dragEnabled = true
+        chartView.setScaleEnabled(false)
         return chartView
+    }()
+    
+    lazy var activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView()
+        indicator.hidesWhenStopped = true
+        indicator.color = .black
+        indicator.style = .large
+        return indicator
     }()
     
     //MARK: - Private properties
@@ -40,23 +52,18 @@ class StockChartCell: UITableViewCell {
     
     //MARK: - Public Methods
     
-    func setData(for ticker: String) {
-        let queue = Config.Queues.chartDataAccess
-        let group = DispatchGroup()
+    func setData(for ticker: String, completion: @escaping (Bool) -> Void) {
         var entries = [ChartDataEntry]()
-        group.enter()
-        queue.async {
-            self.stockBuilder.getChartData(for: ticker) { (result) in
-                var n: Double = 0
-                for element in result {
-                    let chartDataEntry = ChartDataEntry(x: n, y: element)
-                    n += 1
-                    entries.append(chartDataEntry)
-                }
-                group.leave()
+        
+        self.stockBuilder.getChartData(for: ticker) { (result) in
+            var n: Double = 0
+            
+            for element in result {
+                let chartDataEntry = ChartDataEntry(x: n, y: element)
+                n += 1
+                entries.append(chartDataEntry)
             }
-        }
-        group.notify(queue: queue) {
+            
             let chartDataSet = LineChartDataSet(entries: entries, label: "Highest price")
             chartDataSet.drawCirclesEnabled = false
             chartDataSet.mode = .cubicBezier
@@ -72,8 +79,10 @@ class StockChartCell: UITableViewCell {
             
             let data = LineChartData(dataSet: chartDataSet)
             data.setDrawValues(false)
+            
             DispatchQueue.main.async {
                 self.stockChartView.data = data
+                completion(true)
             }
         }
     }
@@ -81,12 +90,21 @@ class StockChartCell: UITableViewCell {
     //MARK: - Private methods
     
     private func setupCell() {
+        self.heightAnchor.constraint(equalToConstant: 300).isActive = true
+        
         self.addSubview(stockChartView)
         stockChartView.translatesAutoresizingMaskIntoConstraints = false
         stockChartView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -5.0).isActive = true
         stockChartView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 5.0).isActive = true
         stockChartView.topAnchor.constraint(equalTo: self.topAnchor, constant: 0.0).isActive = true
         stockChartView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0.0).isActive = true
+        
+        self.addSubview(activityIndicator)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+        activityIndicator.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
+        activityIndicator.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        activityIndicator.widthAnchor.constraint(equalToConstant: 50).isActive = true
     }
     
 }

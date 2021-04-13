@@ -42,31 +42,26 @@ struct StockBuilder {
         
         DispatchQueue.global(qos: .utility).async {
             
-            let result: Result<StockData, StockError> = stockNetwork.performRequest(with: URL)
+            let result: Result<StockData.Search, StockError> = stockNetwork.performRequest(with: URL)
             
             DispatchQueue.main.async {
                 switch result {
                 case .failure(let error):
                     self.delegate?.didFailWithError(self, error: error)
                 case .success (let stockData):
-                    
-                    if let searchResult: [StockData.Result] = stockData.result {
-                        var filteredResult = [StockData.Result]()
-                        
-                        for element in searchResult {
-                            guard element.type == "Common Stock" else {continue}
-                            filteredResult.append(element)
-                        }
+                    if let searchResult: [StockData.Search.Result] = stockData.result {
+                        // set filter to show result only for common stocks, not crypto and etc.
+                        var filteredResult = searchResult.filter{ $0.type == "Common Stock" }
                         
                         if filteredResult.count == 0 {
                             let error = StockError.searchError(ticker)
                             self.delegate?.didFailWithError(self, error: error)
+                        // set search limit to 10 items
                         } else if filteredResult.count >= 10 {
-                            filteredResult = [StockData.Result](filteredResult[0...9])
+                            filteredResult = [StockData.Search.Result](filteredResult[0...9])
                         }
                         
                         for element in filteredResult {
-                            self.delegate?.didEndBuilding(self, filteredResult.count)
                             buildStockItem(for: element.symbol, element.description, amount: filteredResult.count)
                         }
                     } else {
@@ -83,7 +78,7 @@ struct StockBuilder {
         
         DispatchQueue.global(qos: .utility).async {
             
-            let result: Result<StockData, StockError> = stockNetwork.performRequest(with: URL)
+            let result: Result<StockData.Price, StockError> = stockNetwork.performRequest(with: URL)
             
             DispatchQueue.main.async {
                 switch result {
@@ -113,10 +108,10 @@ struct StockBuilder {
     }
     
     func getChartData (for ticker: String, completion: @escaping ([Double]) -> Void) {
-        let timestamp = Int(Date().timeIntervalSince1970)
-        let timestampMonthAgo = timestamp - 2592000
+        let currentTimestamp = Int(Date().timeIntervalSince1970)
+        let monthAgoTimestamp = currentTimestamp - 2592000
         
-        let URL = "\(Config.Api.main)stock/candle?symbol=\(ticker)&resolution=D&from=\(timestampMonthAgo)&to=\(timestamp)&token=\(Config.Api.mainKey)"
+        let URL = "\(Config.Api.main)stock/candle?symbol=\(ticker)&resolution=D&from=\(monthAgoTimestamp)&to=\(currentTimestamp)&token=\(Config.Api.mainKey)"
         
         DispatchQueue.global(qos: .utility).async {
             
@@ -130,6 +125,29 @@ struct StockBuilder {
                     if let chartData = stockData.h {
                         completion(chartData)
                     }
+                }
+            }
+        }
+    }
+    
+    func getNews (for ticker: String, completion: @escaping ([StockNewsModel]) -> Void) {
+        let URL = "\(Config.Api.news)\(ticker)/news?token=\(Config.Api.newsKey)"
+        
+        DispatchQueue.global(qos: .utility).async {
+            
+            let result: Result<[StockData.News], StockError> = stockNetwork.performRequest(with: URL)
+            
+            DispatchQueue.main.async {
+                switch result {
+                case .failure (let error):
+                    self.delegate?.didFailWithError(self, error: error)
+                case .success (let stockData):
+                    var stockNews = [StockNewsModel]()
+                    for searchItem in stockData {
+                        let stockNewsItem = StockNewsModel(headline: searchItem.headline, source: searchItem.source, url: searchItem.url, timestamp: searchItem.datetime, summary: searchItem.summary)
+                        stockNews.append(stockNewsItem)
+                    }
+                    completion(stockNews)
                 }
             }
         }

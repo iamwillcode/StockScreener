@@ -1,4 +1,5 @@
 import UIKit
+import SkeletonView
 
 class StockViewController: UIViewController {
     
@@ -27,17 +28,14 @@ class StockViewController: UIViewController {
         super.viewDidLoad()
         
         stockBuilder.delegate = self
-        tableView.delegate = self
-        tableView.dataSource = self
-        
-        tableView.register(UINib(nibName: K.stockCell, bundle: nil), forCellReuseIdentifier: K.stockCell)
-        tableView.refreshControl = tableViewRefreshControl
         
         resultsTableController = ResultsTableController()
         resultsTableController.delegate = self
         
-        setupUI()
+        setupTableView()
         setupSearchController()
+        setupUI()
+        setupSkeleton() 
         
         stockBuilder.getTrends()
     }
@@ -53,37 +51,16 @@ class StockViewController: UIViewController {
     
     // MARK: - Private Methods
     
-    private func setupUI() {
-        tableView.separatorStyle = .none
-        tableView.backgroundColor = UIColor(named: K.Colors.Background.main)
-        
-        view.backgroundColor = UIColor(named: K.Colors.Brand.ternary)
-        
-        segments.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .selected)
-        segments.setTitleTextAttributes([.foregroundColor: UIColor.black], for: .normal)
-        segments.selectedSegmentTintColor = UIColor(named: K.Colors.Brand.main)
-        segments.layer.borderWidth = 0
-        segments.backgroundColor = UIColor(named: K.Colors.Brand.ternary)
-
-        navigationItem.title = "Stock Screener 📈"
-
-    
-        self.navigationController!.navigationBar.tintColor = UIColor(named: K.Colors.Brand.main)
-        
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = UIColor(named: K.Colors.Brand.ternary)
-        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.black]
-        navigationItem.standardAppearance = appearance
-        navigationItem.scrollEdgeAppearance = appearance
-   
-        let backBarButtton = UIBarButtonItem(title: "Back", style: .plain, target: nil, action: nil)
-        navigationItem.backBarButtonItem = backBarButtton
+    private func setupTableView() {
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(UINib(nibName: K.Cells.stock, bundle: nil), forCellReuseIdentifier: K.Cells.stock)
+        tableView.refreshControl = tableViewRefreshControl
     }
     
     private func setupSearchController() {
         searchController = UISearchController(searchResultsController: resultsTableController)
-        searchController.searchResultsUpdater = self
+        
         searchController.searchBar.autocapitalizationType = .none
         searchController.searchBar.searchTextField.placeholder = NSLocalizedString("Ticker or company name", comment: "")
         searchController.obscuresBackgroundDuringPresentation = false
@@ -95,6 +72,39 @@ class StockViewController: UIViewController {
         
         searchController.delegate = self
         searchController.searchBar.delegate = self
+    }
+    
+    private func setupUI() {
+        view.backgroundColor = UIColor(named: K.Colors.Brand.ternary)
+        
+        tableView.separatorStyle = .none
+        tableView.backgroundColor = UIColor(named: K.Colors.Background.main)
+        
+        segments.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .selected)
+        segments.setTitleTextAttributes([.foregroundColor: UIColor.black], for: .normal)
+        segments.selectedSegmentTintColor = UIColor(named: K.Colors.Brand.main)
+        segments.layer.borderWidth = 0
+        segments.backgroundColor = UIColor(named: K.Colors.Brand.ternary)
+        
+        navigationItem.title = "Stock"
+        
+        self.navigationController!.navigationBar.tintColor = UIColor(named: K.Colors.Brand.main)
+        
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor(named: K.Colors.Brand.ternary)
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.black]
+        navigationItem.standardAppearance = appearance
+        navigationItem.scrollEdgeAppearance = appearance
+        
+        let backBarButtton = UIBarButtonItem(title: "Back", style: .plain, target: nil, action: nil)
+        navigationItem.backBarButtonItem = backBarButtton
+    }
+    
+    private func setupSkeleton() {
+        tableView.isSkeletonable = true
+        let gradient = SkeletonGradient(baseColor: UIColor(named: K.Colors.Brand.ternary)!)
+        tableView.showAnimatedGradientSkeleton(usingGradient: gradient)
     }
     
     private func selectStockAsFavourite(for stock: StockModel) {
@@ -158,11 +168,13 @@ extension StockViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let stockList = [StockModel](source.values).sorted{$0.ticker < $1.ticker}
-        let stockItem = stockList[indexPath.row]
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: K.stockCell, for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: K.Cells.stock, for: indexPath)
             as! StockCell
+        
+        guard source.count > 0 else { return cell }
+        
+        let stockList = [StockModel](source.values).sorted{ $0.ticker < $1.ticker }
+        let stockItem = stockList[indexPath.row]
         
         cell.ticker.text = stockItem.ticker
         cell.companyName.text = stockItem.companyName
@@ -195,7 +207,7 @@ extension StockViewController: UITableViewDataSource {
         if indexPath.row % 2 != 0 {
             cell.backgroundColor = UIColor(named: K.Colors.Background.secondary)
         } else {
-            cell.backgroundColor = .white
+            cell.backgroundColor = UIColor(named: K.Colors.Background.main)
         }
         
         if stockItem.isFavourite {
@@ -219,7 +231,9 @@ extension StockViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        let stockList = [StockModel](source.values).sorted{$0.ticker < $1.ticker}
+        guard source.count > 0 else { return }
+        
+        let stockList = [StockModel](source.values).sorted{ $0.ticker < $1.ticker }
         let stockItem = stockList[indexPath.row]
         
         StockFavourite.shared.checkIfTickerIsFavourite(stock: stockItem) { (result) in
@@ -269,6 +283,7 @@ extension StockViewController: StockBuilderDelegate {
             if amount == trending.count {
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
+                    self.tableView.hideSkeleton(transition: .crossDissolve(0.25))
                 }
                 stockBuilder.updatePrice(for: trending)
             }
@@ -348,15 +363,6 @@ extension StockViewController: UISearchControllerDelegate {
     
 }
 
-// MARK: - UISearchResultsUpdating
-
-extension StockViewController: UISearchResultsUpdating {
-    
-    func updateSearchResults(for searchController: UISearchController) {
-    }
-    
-}
-
 // MARK: - ResultsTableControllerDelegate
 
 extension StockViewController: ResultsTableControllerDelegate {
@@ -364,6 +370,20 @@ extension StockViewController: ResultsTableControllerDelegate {
     func didSelectStock(stock: StockModel) {
         let detailVC = DetailViewController.detailViewControllerForStock(stock)
         navigationController?.pushViewController(detailVC, animated: true)
+    }
+    
+}
+
+//MARK: - SkeletonTableViewDataSource
+
+extension StockViewController: SkeletonTableViewDataSource {
+    
+    func collectionSkeletonView(_ skeletonView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return source.count > 0 ? source.count : 10
+    }
+    
+    func collectionSkeletonView(_ skeletonView: UITableView, cellIdentifierForRowAt indexPath: IndexPath) -> ReusableCellIdentifier {
+        return K.Cells.stock
     }
     
 }
