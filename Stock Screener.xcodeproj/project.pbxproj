@@ -9,12 +9,14 @@
 /* Begin PBXBuildFile section */
 		84133A3B261677C800092745 /* ResultsTableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84133A3A261677C800092745 /* ResultsTableController.swift */; };
 		84133A402616788200092745 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84133A3F2616788200092745 /* DetailViewController.swift */; };
-		8428FB9B2613A72100C186CB /* StockBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8428FB9A2613A72100C186CB /* StockBuilder.swift */; };
+		8428FB9B2613A72100C186CB /* StockManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8428FB9A2613A72100C186CB /* StockManager.swift */; };
 		8428FB9F2614EBF300C186CB /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8428FB9E2614EBF300C186CB /* Constants.swift */; };
+		84475E05262C8632004B7E99 /* ShadowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84475E04262C8632004B7E99 /* ShadowView.swift */; };
+		845E3A8E262F4EF40089272C /* StockSegments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845E3A8D262F4EF40089272C /* StockSegments.swift */; };
 		847E85B3261A411000E9969F /* StockFavourite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847E85B2261A411000E9969F /* StockFavourite.swift */; };
+		84887991263AD99800CA54B3 /* StockLogoProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84887990263AD99800CA54B3 /* StockLogoProvider.swift */; };
 		848BF1E026231BCD003D7E07 /* StockNewsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848BF1DE26231BCC003D7E07 /* StockNewsCell.swift */; };
 		848BF1E126231BCD003D7E07 /* StockNewsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 848BF1DF26231BCC003D7E07 /* StockNewsCell.xib */; };
-		848BF1E426235741003D7E07 /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848BF1E326235741003D7E07 /* WebViewController.swift */; };
 		84A784AD25FE87CC000E3FDE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A784AC25FE87CC000E3FDE /* AppDelegate.swift */; };
 		84A784AF25FE87CC000E3FDE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A784AE25FE87CC000E3FDE /* SceneDelegate.swift */; };
 		84A784B425FE87CC000E3FDE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84A784B225FE87CC000E3FDE /* Main.storyboard */; };
@@ -40,12 +42,14 @@
 		2C29C1EDC0D85BB41FD54132 /* Pods-Stock Screener.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Stock Screener.debug.xcconfig"; path = "Target Support Files/Pods-Stock Screener/Pods-Stock Screener.debug.xcconfig"; sourceTree = "<group>"; };
 		84133A3A261677C800092745 /* ResultsTableController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResultsTableController.swift; sourceTree = "<group>"; };
 		84133A3F2616788200092745 /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
-		8428FB9A2613A72100C186CB /* StockBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockBuilder.swift; sourceTree = "<group>"; };
+		8428FB9A2613A72100C186CB /* StockManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockManager.swift; sourceTree = "<group>"; };
 		8428FB9E2614EBF300C186CB /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		84475E04262C8632004B7E99 /* ShadowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShadowView.swift; sourceTree = "<group>"; };
+		845E3A8D262F4EF40089272C /* StockSegments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockSegments.swift; sourceTree = "<group>"; };
 		847E85B2261A411000E9969F /* StockFavourite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockFavourite.swift; sourceTree = "<group>"; };
+		84887990263AD99800CA54B3 /* StockLogoProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockLogoProvider.swift; sourceTree = "<group>"; };
 		848BF1DE26231BCC003D7E07 /* StockNewsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockNewsCell.swift; sourceTree = "<group>"; };
 		848BF1DF26231BCC003D7E07 /* StockNewsCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = StockNewsCell.xib; sourceTree = "<group>"; };
-		848BF1E326235741003D7E07 /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
 		84A784A925FE87CC000E3FDE /* Stock Screener.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Stock Screener.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		84A784AC25FE87CC000E3FDE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		84A784AE25FE87CC000E3FDE /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -99,6 +103,19 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		84475E03262C8604004B7E99 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				84A784EB2607968C000E3FDE /* StockCell.swift */,
+				84A784EC2607968C000E3FDE /* StockCell.xib */,
+				84D71B0C261B728000D4EC9C /* StockChartCell.swift */,
+				84D71B0D261B728000D4EC9C /* StockChartCell.xib */,
+				848BF1DE26231BCC003D7E07 /* StockNewsCell.swift */,
+				848BF1DF26231BCC003D7E07 /* StockNewsCell.xib */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
 		84A784A025FE87CC000E3FDE = {
 			isa = PBXGroup;
 			children = (
@@ -140,7 +157,6 @@
 				84A784D62607948A000E3FDE /* StockViewController.swift */,
 				84133A3A261677C800092745 /* ResultsTableController.swift */,
 				84133A3F2616788200092745 /* DetailViewController.swift */,
-				848BF1E326235741003D7E07 /* WebViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -149,13 +165,15 @@
 			isa = PBXGroup;
 			children = (
 				84A784CE26079303000E3FDE /* StockNetwork.swift */,
-				8428FB9A2613A72100C186CB /* StockBuilder.swift */,
+				84887990263AD99800CA54B3 /* StockLogoProvider.swift */,
+				8428FB9A2613A72100C186CB /* StockManager.swift */,
 				84A784CB260792EB000E3FDE /* StockData.swift */,
 				84A78502260A6BD6000E3FDE /* StockError.swift */,
 				84A78506260A7E8A000E3FDE /* StockModel.swift */,
 				84E3ED022622122D0037272E /* StockNewsModel.swift */,
 				84C719382610EEC10000D0C2 /* StockFormatter.swift */,
 				847E85B2261A411000E9969F /* StockFavourite.swift */,
+				845E3A8D262F4EF40089272C /* StockSegments.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -163,14 +181,10 @@
 		84A784C626014079000E3FDE /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				84475E03262C8604004B7E99 /* Cells */,
 				84A784B225FE87CC000E3FDE /* Main.storyboard */,
-				84A784EB2607968C000E3FDE /* StockCell.swift */,
-				84A784EC2607968C000E3FDE /* StockCell.xib */,
-				84D71B0C261B728000D4EC9C /* StockChartCell.swift */,
-				84D71B0D261B728000D4EC9C /* StockChartCell.xib */,
+				84475E04262C8632004B7E99 /* ShadowView.swift */,
 				84E3ECFE262200C00037272E /* ChartView.swift */,
-				848BF1DE26231BCC003D7E07 /* StockNewsCell.swift */,
-				848BF1DF26231BCC003D7E07 /* StockNewsCell.xib */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -295,16 +309,18 @@
 				84133A402616788200092745 /* DetailViewController.swift in Sources */,
 				848BF1E026231BCD003D7E07 /* StockNewsCell.swift in Sources */,
 				84A78507260A7E8A000E3FDE /* StockModel.swift in Sources */,
-				848BF1E426235741003D7E07 /* WebViewController.swift in Sources */,
 				8428FB9F2614EBF300C186CB /* Constants.swift in Sources */,
 				847E85B3261A411000E9969F /* StockFavourite.swift in Sources */,
 				84D2C45F2618C49F0031B14A /* Config.swift in Sources */,
 				84A784CF26079303000E3FDE /* StockNetwork.swift in Sources */,
 				84C719392610EEC10000D0C2 /* StockFormatter.swift in Sources */,
 				84A78503260A6BD6000E3FDE /* StockError.swift in Sources */,
-				8428FB9B2613A72100C186CB /* StockBuilder.swift in Sources */,
+				8428FB9B2613A72100C186CB /* StockManager.swift in Sources */,
 				84A784ED2607968C000E3FDE /* StockCell.swift in Sources */,
+				84475E05262C8632004B7E99 /* ShadowView.swift in Sources */,
+				845E3A8E262F4EF40089272C /* StockSegments.swift in Sources */,
 				84E3ED032622122D0037272E /* StockNewsModel.swift in Sources */,
+				84887991263AD99800CA54B3 /* StockLogoProvider.swift in Sources */,
 				84E3ECFF262200C00037272E /* ChartView.swift in Sources */,
 				84A784AD25FE87CC000E3FDE /* AppDelegate.swift in Sources */,
 				84D71B0E261B728000D4EC9C /* StockChartCell.swift in Sources */,
@@ -459,16 +475,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 86Y95KX8Y4;
 				INFOPLIST_FILE = "Stock Screener/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.elieff.iOS-Stock-Screener";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -480,16 +498,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 86Y95KX8Y4;
 				INFOPLIST_FILE = "Stock Screener/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.elieff.iOS-Stock-Screener";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};

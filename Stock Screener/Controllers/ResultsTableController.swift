@@ -1,46 +1,66 @@
 import UIKit
 
 protocol ResultsTableControllerDelegate {
-    
     func didSelectStock(stock: StockModel)
-    
 }
 
 class ResultsTableController: UITableViewController {
     
     // MARK: - Public Properties
     
+    lazy var activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView()
+        indicator.hidesWhenStopped = true
+        indicator.color = .black
+        indicator.style = .medium
+        return indicator
+    }()
+    
+    lazy var placeholder: UILabel = {
+        let label = UILabel()
+        label.textColor = .black
+        label.textAlignment = .center
+        return label
+    }()
+    
     var searchQuery: String = ""
     var delegate: ResultsTableControllerDelegate?
     
     // MARK: - Private Properties
     
-    private var result = [String: StockModel]()
     private var formatter = StockFormatter()
-    private var stockBuilder = StockBuilder()
+    private var stockManager = StockManager()
+    
+    private var searchResultStocks = [String: StockModel]()
     
     // MARK: - Lifecycle
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        
+        reloadTableView()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        stockBuilder.delegate = self
+        stockManager.delegate = self
         
-        self.tableView.register(UINib(nibName: K.Cells.stock, bundle: nil), forCellReuseIdentifier: K.Cells.stock)
-        
+        setupTableView()
+        setupActivityIndicator()
         setupUI()
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return result.count
+        return searchResultStocks.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let stockList = [StockModel](result.values).sorted{$0.ticker < $1.ticker}
-        var stockItem = stockList[indexPath.row]
-        
         let cell = tableView.dequeueReusableCell(withIdentifier: K.Cells.stock, for: indexPath)
             as! StockCell
+        
+        let stockList = [StockModel](searchResultStocks.values).sorted{$0.ticker < $1.ticker}
+        let stockItem = stockList[indexPath.row]
         
         cell.ticker.text = stockItem.ticker
         cell.companyName.text = stockItem.companyName
@@ -70,11 +90,7 @@ class ResultsTableController: UITableViewController {
             cell.companyLogo.image = UIImage(named: K.defaultLogo)
         }
         
-        if indexPath.row % 2 != 0 {
-            cell.backgroundColor = UIColor(named: K.Colors.Background.main)
-        } else {
-            cell.backgroundColor = .white
-        }
+        checkIfStockIsFavourite(stockItem)
         
         if stockItem.isFavourite {
             let image = UIImage(systemName: "star.fill")!.withTintColor(UIColor(named: K.Colors.Common.isFavourite)!, renderingMode: .alwaysOriginal)
@@ -85,20 +101,7 @@ class ResultsTableController: UITableViewController {
         }
         
         cell.callbackOnFavouriteButton = {
-            let ticker = stockItem.ticker
-            self.result[ticker]!.isFavourite = !self.result[ticker]!.isFavourite
-            stockItem.isFavourite = !stockItem.isFavourite
-            if stockItem.isFavourite {
-                StockFavourite.shared.addToFavourite(stock: stockItem)
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
-            } else {
-                StockFavourite.shared.removeFromFavourite(stock: stockItem)
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
-            }
+            self.setupStockAsFavourite(for: stockItem)
         }
         
         return cell
@@ -106,7 +109,7 @@ class ResultsTableController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if tableView.indexPathForSelectedRow != nil {
-            let stockList = [StockModel](result.values).sorted{$0.ticker < $1.ticker}
+            let stockList = [StockModel](searchResultStocks.values).sorted{ $0.ticker < $1.ticker }
             let stock = stockList[tableView.indexPathForSelectedRow!.row]
             delegate?.didSelectStock(stock: stock)
         }
@@ -116,16 +119,33 @@ class ResultsTableController: UITableViewController {
     // MARK: - Public Methods
     
     func clearResults() {
-        result.removeAll()
-        tableView.reloadData()
+        placeholder.removeFromSuperview()
+        DispatchQueue.main.async {
+            self.activityIndicator.stopAnimating()
+        }
+        searchResultStocks.removeAll()
+        reloadTableView()
     }
     
     func searchStock() {
-        result.removeAll()
-        stockBuilder.search(for: searchQuery)
+        searchResultStocks.removeAll()
+        DispatchQueue.main.async {
+            self.activityIndicator.startAnimating()
+        }
+        stockManager.search(for: searchQuery)
     }
     
     // MARK: - Private Methods
+    
+    private func reloadTableView() {
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
+    }
+    
+    private func setupTableView() {
+        tableView.register(UINib(nibName: K.Cells.stock, bundle: nil), forCellReuseIdentifier: K.Cells.stock)
+    }
     
     private func setupUI() {
         tableView.separatorStyle = .none
@@ -133,68 +153,136 @@ class ResultsTableController: UITableViewController {
         
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .white
+        appearance.backgroundColor = UIColor(named: K.Colors.Background.main)
         navigationItem.standardAppearance = appearance
         navigationItem.scrollEdgeAppearance = appearance
     }
     
+    private func setupActivityIndicator() {
+        tableView.addSubview(activityIndicator)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.topAnchor.constraint(equalTo: tableView.topAnchor, constant: 20).isActive = true
+        activityIndicator.centerXAnchor.constraint(equalTo: tableView.centerXAnchor).isActive = true
+        activityIndicator.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        activityIndicator.widthAnchor.constraint(equalToConstant: 50).isActive = true
+    }
+    
+    private func setupPlaceholder(text: String) {
+        tableView.addSubview(placeholder)
+        placeholder.text = text
+        placeholder.translatesAutoresizingMaskIntoConstraints = false
+        placeholder.topAnchor.constraint(equalTo: tableView.topAnchor, constant: 20).isActive = true
+        placeholder.centerXAnchor.constraint(equalTo: tableView.centerXAnchor).isActive = true
+        placeholder.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        placeholder.widthAnchor.constraint(equalTo: tableView.widthAnchor).isActive = true
+    }
+    
+    private func checkIfStockIsFavourite(_ stockItem: StockModel) {
+        StockFavourite.shared.checkIfTickerIsFavourite(stock: stockItem) { [weak self] (result) in
+            let ticker = stockItem.ticker
+            
+            guard let strongSelf = self,
+                  strongSelf.searchResultStocks[ticker] != nil else { return }
+            
+            if result,
+               !stockItem.isFavourite {
+                strongSelf.searchResultStocks[ticker]!.isFavourite = true
+                strongSelf.reloadTableView()
+            } else if !result,
+                      stockItem.isFavourite {
+                strongSelf.searchResultStocks[ticker]!.isFavourite = false
+                strongSelf.reloadTableView()
+            }
+        }
+    }
+    
+    private func setupStockAsFavourite(for stock: StockModel) {
+        let queue = Config.Queues.searchResultStocksAccess
+        
+        let ticker = stock.ticker
+        
+        var selectedStock = stock
+        selectedStock.isFavourite = !selectedStock.isFavourite
+        
+        queue.async {
+            if self.searchResultStocks[ticker] != nil {
+                self.searchResultStocks[ticker]!.isFavourite = !self.searchResultStocks[ticker]!.isFavourite
+            }
+        }
+        
+        if selectedStock.isFavourite {
+            StockFavourite.shared.addToFavourite(stock: selectedStock)
+        } else {
+            StockFavourite.shared.removeFromFavourite(stock: selectedStock)
+        }
+        
+        reloadTableView()
+    }
+    
 }
 
-//MARK: - StockBuilderDelegate
+//MARK: - StockManagerDelegate
 
-extension ResultsTableController: StockBuilderDelegate {
+extension ResultsTableController: StockManagerDelegate {
     
-    func didUpdateStockItem(_ stockBuilder: StockBuilder, _ stockItem: StockModel) {
-        let queue = Config.Queues.resultDictionaryAccess
+    func didUpdateStockItem(_ stock: StockModel, segment: StockSegments?) {
+        let queue = Config.Queues.searchResultStocksAccess
+        let ticker = stock.ticker
+        var updatedStocks = [String: StockModel]()
         
         queue.sync {
-            let key = stockItem.ticker
-            if self.result[key] != nil {
-                if let currentPrice = stockItem.currentPrice, self.result[key]!.currentPrice != currentPrice {
-                    self.result[key]!.currentPrice = currentPrice
-                }
-                if let previousPrice = stockItem.previousPrice, self.result[key]!.previousPrice != previousPrice {
-                    self.result[key]!.previousPrice = previousPrice
-                }
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
-            } else {
-                self.result[key] = stockItem
-                StockFavourite.shared.checkIfTickerIsFavourite(stock: stockItem) { (result) in
-                    if result {
-                        self.result[key]?.isFavourite = true
-                    }
-                }
-            }
+            updatedStocks = self.searchResultStocks
         }
-    }
-    
-    func didEndBuilding(_ stockBuilder: StockBuilder, _ amount: Int) {
-        let queue = Config.Queues.resultDictionaryAccess
+        
+        guard updatedStocks[ticker] != nil else { return }
+        
+        if let currentPrice = stock.currentPrice, updatedStocks[ticker]!.currentPrice != currentPrice {
+            updatedStocks[ticker]!.currentPrice = currentPrice
+        }
+        if let previousPrice = stock.previousPrice, updatedStocks[ticker]!.previousPrice != previousPrice {
+            updatedStocks[ticker]!.previousPrice = previousPrice
+        }
         
         queue.sync {
-            if amount == result.count {
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
-                stockBuilder.updatePrice(for: result)
-            }
+            self.searchResultStocks = updatedStocks
         }
+        
+        reloadTableView()
     }
     
-    func didFailWithError(_ stockBuilder: StockBuilder, error: StockError) {
+    func didBuildStockItem(_ stock: StockModel) {
+        let queue = Config.Queues.searchResultStocksAccess
+        let ticker = stock.ticker
+        
+        queue.sync {
+            self.searchResultStocks[ticker] = stock
+        }
+        
+        stockManager.getPrice(for: stock, segment: nil)
+    }
+    
+    func didEndBuilding() {
+        DispatchQueue.main.async {
+            self.activityIndicator.stopAnimating()
+        }
+        reloadTableView()
+    }
+    
+    func didFailWithError(_ error: StockError) {
         switch error {
         case .tickerPriceError(let ticker):
             print(error.localizedDescription)
-            if result[ticker] != nil {
-                if result[ticker]!.currentPrice == nil {
-                    result[ticker]!.currentPrice = 0
+            if searchResultStocks[ticker] != nil {
+                if searchResultStocks[ticker]!.currentPrice == nil {
+                    searchResultStocks[ticker]!.currentPrice = 0
                 }
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
+                reloadTableView()
             }
+        case .searchError(let ticker):
+            activityIndicator.stopAnimating()
+            print(error.localizedDescription)
+            let text = "No results for \"\(ticker)\""
+            setupPlaceholder(text: text)
         default:
             print(error.localizedDescription)
         }

@@ -6,7 +6,9 @@ class StockViewController: UIViewController {
     // MARK: - IBOutlets
     
     @IBOutlet var tableView: UITableView!
-    @IBOutlet var segments: UISegmentedControl!
+    @IBOutlet var trendingSegmentButton: UIButton!
+    @IBOutlet var favouriteSegmentButton: UIButton!
+    @IBOutlet var segmentsView: UIView!
     
     // MARK: - Private Properties
     
@@ -16,18 +18,36 @@ class StockViewController: UIViewController {
         return refreshControl
     }()
     
-    private var trending = [String: StockModel]()
     private var searchController: UISearchController!
     private var resultsTableController: ResultsTableController!
     private var formatter = StockFormatter()
-    private var stockBuilder = StockBuilder()
+    private var stockManager = StockManager()
+    
+    private var selectedSegment: StockSegments = .trending
+    
+    private var trendingStocks = [String: StockModel]()
+    private var sourceStocks: [String: StockModel] {
+        if selectedSegment == .trending {
+            return trendingStocks
+        } else {
+            return StockFavourite.shared.favouriteStocks
+        }
+    }
+    
+    private var trendingIsBuilded = false
     
     // MARK: - Lifecycle
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        
+        reloadTableView()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        stockBuilder.delegate = self
+        stockManager.delegate = self
         
         resultsTableController = ResultsTableController()
         resultsTableController.delegate = self
@@ -35,21 +55,31 @@ class StockViewController: UIViewController {
         setupTableView()
         setupSearchController()
         setupUI()
+        setupSegmentButtons()
         setupSkeleton() 
         
-        stockBuilder.getTrends()
+        stockManager.getTrends()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let destinationVC = segue.destination as? DetailViewController {
             if tableView.indexPathForSelectedRow != nil {
-                let stockList = [StockModel](source.values).sorted{$0.ticker < $1.ticker}
-                destinationVC.stock = stockList[tableView.indexPathForSelectedRow!.row]
+                let stockList = [StockModel](sourceStocks.values).sorted{ $0.ticker < $1.ticker }
+                destinationVC.detailedStock = stockList[tableView.indexPathForSelectedRow!.row]
             }
         }
     }
     
     // MARK: - Private Methods
+    
+    private func reloadTableView() {
+        if self.trendingIsBuilded, self.tableView.isSkeletonActive {
+            self.hideSkeleton()
+        }
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
+    }
     
     private func setupTableView() {
         tableView.delegate = self
@@ -80,11 +110,7 @@ class StockViewController: UIViewController {
         tableView.separatorStyle = .none
         tableView.backgroundColor = UIColor(named: K.Colors.Background.main)
         
-        segments.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .selected)
-        segments.setTitleTextAttributes([.foregroundColor: UIColor.black], for: .normal)
-        segments.selectedSegmentTintColor = UIColor(named: K.Colors.Brand.main)
-        segments.layer.borderWidth = 0
-        segments.backgroundColor = UIColor(named: K.Colors.Brand.ternary)
+        segmentsView.backgroundColor = UIColor(named: K.Colors.Brand.ternary)
         
         navigationItem.title = "Stock"
         
@@ -101,38 +127,83 @@ class StockViewController: UIViewController {
         navigationItem.backBarButtonItem = backBarButtton
     }
     
+    private func setupSegmentButtonUI(_ button: UIButton) {
+        guard let title = button.titleLabel else { return }
+        if title.text == selectedSegment.rawValue {
+            title.font = UIFont.boldSystemFont(ofSize: 20)
+            button.setTitleColor(.black, for: .normal)
+        } else {
+            title.font = UIFont.systemFont(ofSize: 16)
+            button.setTitleColor(.gray, for: .normal)
+        }
+    }
+    
+    private func setupSegmentButtons() {
+        setupSegmentButtonUI(trendingSegmentButton)
+        setupSegmentButtonUI(favouriteSegmentButton)
+    }
+    
     private func setupSkeleton() {
         tableView.isSkeletonable = true
         let gradient = SkeletonGradient(baseColor: UIColor(named: K.Colors.Brand.ternary)!)
         tableView.showAnimatedGradientSkeleton(usingGradient: gradient)
     }
     
-    private func selectStockAsFavourite(for stock: StockModel) {
+    private func hideSkeleton() {
+        DispatchQueue.main.async {
+            self.tableView.hideSkeleton(transition: .crossDissolve(0.25))
+        }
+    }
+    
+    private func checkIfStockIsFavourite(_ stockItem: StockModel) {
+        StockFavourite.shared.checkIfTickerIsFavourite(stock: stockItem) { [weak self] (result) in
+            let ticker = stockItem.ticker
+            
+            guard let strongSelf = self,
+                  strongSelf.trendingStocks[ticker] != nil else { return }
+            
+            if result,
+               !stockItem.isFavourite {
+                strongSelf.trendingStocks[ticker]!.isFavourite = true
+                strongSelf.reloadTableView()
+            } else if !result,
+                      stockItem.isFavourite {
+                strongSelf.trendingStocks[ticker]!.isFavourite = false
+                strongSelf.reloadTableView()
+            }
+        }
+    }
+    
+    private func setupStockAsFavourite(for stock: StockModel) {
+        let queue = Config.Queues.trendingStocksAccess
+        
         let ticker = stock.ticker
         
         var selectedStock = stock
         selectedStock.isFavourite = !selectedStock.isFavourite
         
-        if self.trending[ticker] != nil {
-            self.trending[ticker]!.isFavourite = !self.trending[ticker]!.isFavourite
+        queue.async {
+            if self.trendingStocks[ticker] != nil {
+                self.trendingStocks[ticker]!.isFavourite = !self.trendingStocks[ticker]!.isFavourite
+            }
         }
         
         if selectedStock.isFavourite {
             StockFavourite.shared.addToFavourite(stock: selectedStock)
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
         } else {
             StockFavourite.shared.removeFromFavourite(stock: selectedStock)
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
         }
+        
+        reloadTableView()
     }
     
     @objc private func refreshPrice(sender: UIRefreshControl) {
-        stockBuilder.updatePrice(for: source)
-        sender.endRefreshing()
+        for stock in sourceStocks {
+            stockManager.getPrice(for: stock.value, segment: selectedSegment)
+        }
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
+             sender.endRefreshing()
+        }
     }
     
     @objc private func performStockSearch() {
@@ -141,9 +212,23 @@ class StockViewController: UIViewController {
     
     // MARK: - IBActions
     
-    @IBAction func indexChanged(_ sender: UISegmentedControl) {
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
+    @IBAction func changeSourceToTrending(_ sender: UIButton) {
+        if selectedSegment != .trending {
+            selectedSegment = .trending
+            DispatchQueue.main.async {
+                self.setupSegmentButtons()
+            }
+            reloadTableView()
+        }
+    }
+    
+    @IBAction func changeSourceToFavourite(_ sender: UIButton) {
+        if selectedSegment != .favourite {
+            selectedSegment = .favourite
+            DispatchQueue.main.async {
+                self.setupSegmentButtons()
+            }
+            reloadTableView()
         }
     }
     
@@ -153,27 +238,17 @@ class StockViewController: UIViewController {
 
 extension StockViewController: UITableViewDataSource {
     
-    var source: [String: StockModel] {
-        get {
-            if segments.selectedSegmentIndex == 0 {
-                return self.trending
-            } else {
-                return StockFavourite.shared.favourite
-            }
-        }
-    }
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return source.count
+        return sourceStocks.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: K.Cells.stock, for: indexPath)
             as! StockCell
         
-        guard source.count > 0 else { return cell }
+        guard sourceStocks.count > 0 else { return cell }
         
-        let stockList = [StockModel](source.values).sorted{ $0.ticker < $1.ticker }
+        let stockList = [StockModel](sourceStocks.values).sorted{ $0.ticker < $1.ticker }
         let stockItem = stockList[indexPath.row]
         
         cell.ticker.text = stockItem.ticker
@@ -204,10 +279,8 @@ extension StockViewController: UITableViewDataSource {
             cell.companyLogo.image = UIImage(named: K.defaultLogo)
         }
         
-        if indexPath.row % 2 != 0 {
-            cell.backgroundColor = UIColor(named: K.Colors.Background.secondary)
-        } else {
-            cell.backgroundColor = UIColor(named: K.Colors.Background.main)
+        if selectedSegment == .trending {
+            checkIfStockIsFavourite(stockItem)
         }
         
         if stockItem.isFavourite {
@@ -219,7 +292,7 @@ extension StockViewController: UITableViewDataSource {
         }
         
         cell.callbackOnFavouriteButton = {
-            self.selectStockAsFavourite(for: stockItem)
+            self.setupStockAsFavourite(for: stockItem)
         }
         
         return cell
@@ -231,16 +304,8 @@ extension StockViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        guard source.count > 0 else { return }
-        
-        let stockList = [StockModel](source.values).sorted{ $0.ticker < $1.ticker }
-        let stockItem = stockList[indexPath.row]
-        
-        StockFavourite.shared.checkIfTickerIsFavourite(stock: stockItem) { (result) in
-            if result {
-                let ticker = stockItem.ticker
-                self.trending[ticker]?.isFavourite = true
-            }
+        if cell.isSkeletonActive, trendingIsBuilded == true {
+            cell.hideSkeleton(transition: .crossDissolve(0.25))
         }
     }
     
@@ -250,57 +315,68 @@ extension StockViewController: UITableViewDataSource {
 
 extension StockViewController: UITableViewDelegate {}
 
-//MARK: - StockBuilderDelegate
+//MARK: - StockManagerDelegate
 
-extension StockViewController: StockBuilderDelegate {
+extension StockViewController: StockManagerDelegate {
     
-    func didUpdateStockItem(_ stockBuilder: StockBuilder, _ stockItem: StockModel) {
-        let queue = Config.Queues.stockDictionaryAccess
+    func didUpdateStockItem(_ stock: StockModel, segment: StockSegments?) {
+        let queue = Config.Queues.trendingStocksAccess
+        let ticker = stock.ticker
+        var updatedStocks = [String: StockModel]()
         
-        queue.sync {
-            let key = stockItem.ticker
-            if self.trending[key] != nil {
-                if let currentPrice = stockItem.currentPrice, self.trending[key]!.currentPrice != currentPrice {
-                    self.trending[key]!.currentPrice = currentPrice
-                }
-                if let previousPrice = stockItem.previousPrice, self.trending[key]!.previousPrice != previousPrice {
-                    self.trending[key]!.previousPrice = previousPrice
-                }
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
+        if segment == .trending {
+            queue.sync {
+                updatedStocks = self.trendingStocks
             }
-            else {
-                self.trending[key] = stockItem
-            }
+        } else if segment == .favourite {
+            updatedStocks = StockFavourite.shared.favouriteStocks
         }
+        
+        guard updatedStocks[ticker] != nil else { return }
+        
+        if let currentPrice = stock.currentPrice, updatedStocks[ticker]!.currentPrice != currentPrice {
+            updatedStocks[ticker]!.currentPrice = currentPrice
+        }
+        if let previousPrice = stock.previousPrice, updatedStocks[ticker]!.previousPrice != previousPrice {
+            updatedStocks[ticker]!.previousPrice = previousPrice
+        }
+        
+        if segment == .trending {
+            queue.sync {
+                self.trendingStocks = updatedStocks
+            }
+        } else if segment == .favourite {
+            StockFavourite.shared.updateFavouriteStocks(to: updatedStocks)
+        }
+        
+        reloadTableView()
     }
     
-    func didEndBuilding(_ stockBuilder: StockBuilder, _ amount: Int) {
-        let queue = Config.Queues.stockDictionaryAccess
+    func didBuildStockItem(_ stock: StockModel) {
+        let queue = Config.Queues.trendingStocksAccess
+        let ticker = stock.ticker
         
         queue.sync {
-            if amount == trending.count {
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                    self.tableView.hideSkeleton(transition: .crossDissolve(0.25))
-                }
-                stockBuilder.updatePrice(for: trending)
-            }
+            self.trendingStocks[ticker] = stock
         }
+        
+        stockManager.getPrice(for: stock, segment: .trending)
     }
     
-    func didFailWithError(_ stockBuilder: StockBuilder, error: StockError) {
+    func didEndBuilding() {
+        trendingIsBuilded = true
+        reloadTableView()
+    }
+    
+    func didFailWithError(_ error: StockError) {
         switch error {
         case .tickerPriceError(let ticker):
             print(error.localizedDescription)
-            if trending[ticker] != nil {
-                if trending[ticker]!.currentPrice == nil {
-                    trending[ticker]!.currentPrice = 0
+            if trendingStocks[ticker] != nil {
+                if trendingStocks[ticker]!.currentPrice == nil {
+                    trendingStocks[ticker]!.currentPrice = 0
                 }
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
+                reloadTableView()
             }
         default:
             print(error.localizedDescription)
@@ -379,7 +455,16 @@ extension StockViewController: ResultsTableControllerDelegate {
 extension StockViewController: SkeletonTableViewDataSource {
     
     func collectionSkeletonView(_ skeletonView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return source.count > 0 ? source.count : 10
+        if selectedSegment == .trending {
+            let queue = Config.Queues.trendingStocksAccess
+            var count = 0
+            queue.sync {
+                count = trendingStocks.count
+            }
+            return count > 0 ? count : 10
+        } else {
+            return sourceStocks.count > 0 ? sourceStocks.count : 0
+        }
     }
     
     func collectionSkeletonView(_ skeletonView: UITableView, cellIdentifierForRowAt indexPath: IndexPath) -> ReusableCellIdentifier {

@@ -27,13 +27,14 @@ final class StockChartCell: UITableViewCell {
     
     //MARK: - Private properties
     
-    private let stockBuilder = StockBuilder()
+    private let stockManager = StockManager()
     private let detailViewController = DetailViewController()
     
     // MARK: - Lifecycle
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -46,16 +47,12 @@ final class StockChartCell: UITableViewCell {
         setupCell()
     }
     
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-    }
-    
     //MARK: - Public Methods
     
     func setData(for ticker: String, completion: @escaping (Bool) -> Void) {
         var entries = [ChartDataEntry]()
         
-        self.stockBuilder.getChartData(for: ticker) { (result) in
+        self.stockManager.getChartData(for: ticker) { (result) in
             var n: Double = 0
             
             for element in result {

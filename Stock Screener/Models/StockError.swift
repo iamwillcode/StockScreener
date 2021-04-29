@@ -8,6 +8,7 @@ enum StockError: Error {
     case tickerPriceError(String)
     case tickerLogoError(String)
     case searchError(String)
+    case trendsError
 }
 
 extension StockError: LocalizedError {
@@ -47,6 +48,11 @@ extension StockError: LocalizedError {
         case .searchError(let ticker):
             return NSLocalizedString(
                 "Can't find any matches for \(ticker).",
+                comment: ""
+            )
+        case .trendsError:
+            return NSLocalizedString(
+                "Can't get trending tickers.",
                 comment: ""
             )
         }

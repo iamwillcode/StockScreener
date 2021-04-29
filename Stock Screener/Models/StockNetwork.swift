@@ -10,7 +10,8 @@ struct StockNetwork {
         
         guard let url = URL(string: urlString) else { return .failure(.urlError) }
         
-        let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
+        let request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.reloadIgnoringLocalCacheData, timeoutInterval: 10)
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
             if error != nil {
                 result = .failure(.sessionTaskError(error))
             }

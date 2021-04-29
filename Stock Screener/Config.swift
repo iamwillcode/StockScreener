@@ -24,10 +24,10 @@ struct Config {
     }
 
     struct Queues {
-        static let builderTask = DispatchQueue(label: "stock-builder-tasks")
-        static let stockDictionaryAccess = DispatchQueue(label: "access-stock-dictionary")
-        static let resultDictionaryAccess = DispatchQueue(label: "acces-result-dictionary")
-        static let favouriteDictionaryAccess = DispatchQueue(label: "access-favourite-dictionary")
+        static let stockManagerTask = DispatchQueue(label: "stock-manager-tasks")
+        static let trendingStocksAccess = DispatchQueue(label: "access-trending-dictionary")
+        static let favouriteStocksAccess = DispatchQueue(label: "access-favourite-dictionary")
+        static let searchResultStocksAccess = DispatchQueue(label: "acces-result-dictionary")
         static let chartDataAccess = DispatchQueue(label: "chart-data")
     }
     

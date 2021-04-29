@@ -1,19 +1,25 @@
 import UIKit
+import SafariServices
 
 class DetailViewController: UIViewController {
     
     // MARK: - IBOutlets
     
     @IBOutlet var tableView: UITableView!
+    @IBOutlet var favouriteButton: UIButton!
     
     // MARK: - Public Properties
     
-    var stock: StockModel!
+    var detailedStock: StockModel!
     
     // MARK: - Private Properties
     
-    private let stockBuilder = StockBuilder()
+    private let stockManager = StockManager()
+    
     private var stockNews = [StockNewsModel]()
+    
+    private var isFavourite = false
+    
     private var dataIsSetted: Bool = false {
         didSet {
             DispatchQueue.main.async {
@@ -27,7 +33,7 @@ class DetailViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        assert(stock != nil, "Stock has no value")
+        assert(detailedStock != nil, "Stock has no value")
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -36,18 +42,14 @@ class DetailViewController: UIViewController {
         setupTableView()
         setupUI()
         
-        stockBuilder.getNews(for: stock.ticker) { (result) in
-            self.stockNews = result
+        checkIfStockIsFavourite()
+        setupFavouriteButton()
+        
+        stockManager.getNews(for: detailedStock.ticker) { [weak self] (result) in
+            guard let strongSelf = self else { return }
+            strongSelf.stockNews = result
             DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-        }
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let destinationVC = segue.destination as? WebViewController {
-            if let indexPath = tableView.indexPathForSelectedRow {
-                destinationVC.url = URL(string: stockNews[indexPath.row].url)
+                strongSelf.tableView.reloadData()
             }
         }
     }
@@ -61,7 +63,7 @@ class DetailViewController: UIViewController {
     
     class func detailViewControllerForStock(_ stock: StockModel) -> UIViewController {
         let detailViewController = loadFromStoryboard()
-        detailViewController!.stock = stock
+        detailViewController!.detailedStock = stock
         return detailViewController!
     }
     
@@ -75,7 +77,7 @@ class DetailViewController: UIViewController {
     }
     
     private func setupUI() {
-        title = stock.ticker
+        title = detailedStock.ticker
         
         tableView.separatorStyle = .none
         tableView.estimatedRowHeight = 100
@@ -85,6 +87,49 @@ class DetailViewController: UIViewController {
         navigationItem.backBarButtonItem = backBarButtton
     }
     
+    private func setupFavouriteButton() {
+        if isFavourite {
+            let image = UIImage(systemName: "star.fill")!.withTintColor(UIColor(named: K.Colors.Common.isFavourite)!, renderingMode: .alwaysOriginal)
+            favouriteButton.setImage(image, for: .normal)
+        } else {
+            let image = UIImage(systemName: "star.fill")!.withTintColor(UIColor(named: K.Colors.Common.notFavourite)!, renderingMode: .alwaysOriginal)
+            favouriteButton.setImage(image, for: .normal)
+        }
+    }
+    
+    private func showNewsWebsite(url: String) {
+        if let url = URL(string: url) {
+            let config = SFSafariViewController.Configuration()
+            config.entersReaderIfAvailable = true
+            
+            let vc = SFSafariViewController(url: url, configuration: config)
+            present(vc, animated: true)
+        }
+    }
+    
+    private func checkIfStockIsFavourite() {
+        StockFavourite.shared.checkIfTickerIsFavourite(stock: detailedStock) { [weak self] (result) in
+            guard let strongSelf = self else { return }
+            strongSelf.isFavourite = result
+        }
+    }
+    
+    //MARK: - IBActions
+    
+    @IBAction func setFavourite(_ sender: UIButton) {
+        if isFavourite {
+            isFavourite = false
+            detailedStock.isFavourite = false
+            StockFavourite.shared.removeFromFavourite(stock: detailedStock)
+            setupFavouriteButton()
+        } else {
+            isFavourite = true
+            detailedStock.isFavourite = true
+            StockFavourite.shared.addToFavourite(stock: detailedStock)
+            setupFavouriteButton()
+        }
+    }
+
 }
 
 //MARK: - UITableViewDataSource
@@ -109,7 +154,7 @@ extension DetailViewController: UITableViewDataSource {
                 as! StockChartCell
             
             if cell.stockChartView.data == nil {
-                cell.setData(for: stock.ticker) { (result) in
+                cell.setData(for: detailedStock.ticker) { (result) in
                     self.dataIsSetted = true
                 }
                 cell.stockChartView.isHidden = true
@@ -128,8 +173,13 @@ extension DetailViewController: UITableViewDataSource {
             
             cell.source.text = stockNewsItem.source
             cell.headline.text = stockNewsItem.headline
-            cell.summary.text = stockNewsItem.summary
             cell.age.text = "\(stockNewsItem.age) ago"
+            
+            if stockNewsItem.summary == "No summary available." {
+                cell.summary.isHidden = true
+            } else {
+                cell.summary.text = stockNewsItem.summary
+            }
             
             return cell
         }
@@ -147,7 +197,7 @@ extension DetailViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 1 {
-            self.performSegue(withIdentifier: "openWebView", sender: nil)
+            showNewsWebsite(url: stockNews[indexPath.row].url)
             tableView.deselectRow(at: indexPath, animated: true)
         }
     }
