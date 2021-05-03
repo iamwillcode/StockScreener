@@ -172,16 +172,14 @@ struct StockManager {
     }
     
     func buildStockItem(for ticker: String, _ companyName: String, workload: Int, index: Int) {
-        let queue = Config.Queues.stockManagerTask
+        let queue = K.Queues.stockManagerTask
         let group = DispatchGroup()
         
         var logo: UIImage?
         
         group.enter()
         queue.async {
-            print("before"+ticker)
             getLogo(for: ticker) { (image) in
-                print("after"+ticker)
                 logo = image
                 group.leave()
             }
@@ -190,7 +188,6 @@ struct StockManager {
         group.notify(queue: queue) {
             let stockItem = StockModel(ticker: ticker, companyName: companyName, logo: logo)
             self.delegate?.didBuildStockItem(stockItem)
-            print(index)
             if index == workload {
                 self.delegate?.didEndBuilding()
             }

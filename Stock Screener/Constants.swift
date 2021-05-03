@@ -1,11 +1,4 @@
-//
-//  Constants.swift
-//  Stock Screener
-//
-//  Created by Admin on 31.03.2021.
-//
-
-import Foundation
+import UIKit
 
 struct K {
     
@@ -19,22 +12,30 @@ struct K {
     
     struct Colors {
         struct Brand {
-            static let main = "MainBrandColor"
-            static let secondary = "SecondaryBrandColor"
-            static let ternary = "TernaryBrandColor"
+            static let main = UIColor(named: "MainBrandColor")!
+            static let secondary = UIColor(named: "SecondaryBrandColor")!
+            static let ternary = UIColor(named: "TernaryBrandColor")!
         }
         
         struct Background {
-            static let main = "MainBackgroundColor"
-            static let secondary = "SecondaryBackgroundColor"
+            static let main = UIColor(named: "MainBackgroundColor")!
+            static let secondary = UIColor(named: "SecondaryBackgroundColor")!
         }
         
         struct Common {
-            static let green = "StockGreen"
-            static let red = "StockRed"
-            static let isFavourite = "IsFavourite"
-            static let notFavourite = "notFavourite"
+            static let green = UIColor(named: "StockGreen")!
+            static let red = UIColor(named: "StockRed")!
+            static let isFavourite = UIColor(named: "IsFavourite")!
+            static let notFavourite = UIColor(named: "notFavourite")!
         }
+    }
+    
+    struct Queues {
+        static let stockManagerTask = DispatchQueue(label: "stock-manager-tasks")
+        static let trendingStocksAccess = DispatchQueue(label: "access-trending-dictionary")
+        static let favouriteStocksAccess = DispatchQueue(label: "access-favourite-dictionary")
+        static let searchResultStocksAccess = DispatchQueue(label: "acces-result-dictionary")
+        static let chartDataAccess = DispatchQueue(label: "chart-data")
     }
     
 }

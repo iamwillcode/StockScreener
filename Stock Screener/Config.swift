@@ -23,12 +23,4 @@ struct Config {
         static let newsKey = "pk_8f50c7473cf041fdbe7f9bbafb968391"
     }
 
-    struct Queues {
-        static let stockManagerTask = DispatchQueue(label: "stock-manager-tasks")
-        static let trendingStocksAccess = DispatchQueue(label: "access-trending-dictionary")
-        static let favouriteStocksAccess = DispatchQueue(label: "access-favourite-dictionary")
-        static let searchResultStocksAccess = DispatchQueue(label: "acces-result-dictionary")
-        static let chartDataAccess = DispatchQueue(label: "chart-data")
-    }
-    
 }

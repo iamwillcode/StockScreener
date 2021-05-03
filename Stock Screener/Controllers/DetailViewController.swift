@@ -89,10 +89,10 @@ class DetailViewController: UIViewController {
     
     private func setupFavouriteButton() {
         if isFavourite {
-            let image = UIImage(systemName: "star.fill")!.withTintColor(UIColor(named: K.Colors.Common.isFavourite)!, renderingMode: .alwaysOriginal)
+            let image = UIImage(systemName: "star.fill")!.withTintColor(K.Colors.Common.isFavourite, renderingMode: .alwaysOriginal)
             favouriteButton.setImage(image, for: .normal)
         } else {
-            let image = UIImage(systemName: "star.fill")!.withTintColor(UIColor(named: K.Colors.Common.notFavourite)!, renderingMode: .alwaysOriginal)
+            let image = UIImage(systemName: "star.fill")!.withTintColor(K.Colors.Common.notFavourite, renderingMode: .alwaysOriginal)
             favouriteButton.setImage(image, for: .normal)
         }
     }

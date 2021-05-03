@@ -30,7 +30,7 @@ class StockViewController: UIViewController {
         if selectedSegment == .trending {
             return trendingStocks
         } else {
-            return StockFavourite.shared.favouriteStocks
+            return StockFavourite.shared.getFavouriteStocks()
         }
     }
     
@@ -73,10 +73,10 @@ class StockViewController: UIViewController {
     // MARK: - Private Methods
     
     private func reloadTableView() {
-        if self.trendingIsBuilded, self.tableView.isSkeletonActive {
-            self.hideSkeleton()
-        }
         DispatchQueue.main.async {
+            if self.trendingIsBuilded, self.tableView.isSkeletonActive {
+                self.hideSkeleton()
+            }
             self.tableView.reloadData()
         }
     }
@@ -105,20 +105,20 @@ class StockViewController: UIViewController {
     }
     
     private func setupUI() {
-        view.backgroundColor = UIColor(named: K.Colors.Brand.ternary)
+        view.backgroundColor = K.Colors.Brand.ternary
         
         tableView.separatorStyle = .none
-        tableView.backgroundColor = UIColor(named: K.Colors.Background.main)
+        tableView.backgroundColor = K.Colors.Background.main
         
-        segmentsView.backgroundColor = UIColor(named: K.Colors.Brand.ternary)
+        segmentsView.backgroundColor = K.Colors.Brand.ternary
         
         navigationItem.title = "Stock"
         
-        self.navigationController!.navigationBar.tintColor = UIColor(named: K.Colors.Brand.main)
+        self.navigationController!.navigationBar.tintColor = K.Colors.Brand.main
         
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = UIColor(named: K.Colors.Brand.ternary)
+        appearance.backgroundColor = K.Colors.Brand.ternary
         appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.black]
         navigationItem.standardAppearance = appearance
         navigationItem.scrollEdgeAppearance = appearance
@@ -145,14 +145,12 @@ class StockViewController: UIViewController {
     
     private func setupSkeleton() {
         tableView.isSkeletonable = true
-        let gradient = SkeletonGradient(baseColor: UIColor(named: K.Colors.Brand.ternary)!)
+        let gradient = SkeletonGradient(baseColor: K.Colors.Brand.ternary)
         tableView.showAnimatedGradientSkeleton(usingGradient: gradient)
     }
     
     private func hideSkeleton() {
-        DispatchQueue.main.async {
-            self.tableView.hideSkeleton(transition: .crossDissolve(0.25))
-        }
+            tableView.hideSkeleton(transition: .crossDissolve(0.25))
     }
     
     private func checkIfStockIsFavourite(_ stockItem: StockModel) {
@@ -175,14 +173,14 @@ class StockViewController: UIViewController {
     }
     
     private func setupStockAsFavourite(for stock: StockModel) {
-        let queue = Config.Queues.trendingStocksAccess
+        let queue = K.Queues.trendingStocksAccess
         
         let ticker = stock.ticker
         
         var selectedStock = stock
         selectedStock.isFavourite = !selectedStock.isFavourite
         
-        queue.async {
+        queue.sync {
             if self.trendingStocks[ticker] != nil {
                 self.trendingStocks[ticker]!.isFavourite = !self.trendingStocks[ticker]!.isFavourite
             }
@@ -258,9 +256,9 @@ extension StockViewController: UITableViewDataSource {
         
         if let delta = stockItem.delta {
             if delta >= 0 {
-                cell.dayDelta.textColor = UIColor(named: K.Colors.Common.green)
+                cell.dayDelta.textColor = K.Colors.Common.green
             } else if delta < 0 {
-                cell.dayDelta.textColor = UIColor(named: K.Colors.Common.red)
+                cell.dayDelta.textColor = K.Colors.Common.red
             } else {
                 cell.dayDelta.textColor = .black
             }
@@ -284,10 +282,10 @@ extension StockViewController: UITableViewDataSource {
         }
         
         if stockItem.isFavourite {
-            let image = UIImage(systemName: "star.fill")!.withTintColor(UIColor(named: K.Colors.Common.isFavourite)!, renderingMode: .alwaysOriginal)
+            let image = UIImage(systemName: "star.fill")!.withTintColor(K.Colors.Common.isFavourite, renderingMode: .alwaysOriginal)
             cell.favouriteButton.setImage(image, for: .normal)
         } else {
-            let image = UIImage(systemName: "star.fill")!.withTintColor(UIColor(named: K.Colors.Common.notFavourite)!, renderingMode: .alwaysOriginal)
+            let image = UIImage(systemName: "star.fill")!.withTintColor(K.Colors.Common.notFavourite, renderingMode: .alwaysOriginal)
             cell.favouriteButton.setImage(image, for: .normal)
         }
         
@@ -320,7 +318,7 @@ extension StockViewController: UITableViewDelegate {}
 extension StockViewController: StockManagerDelegate {
     
     func didUpdateStockItem(_ stock: StockModel, segment: StockSegments?) {
-        let queue = Config.Queues.trendingStocksAccess
+        let queue = K.Queues.trendingStocksAccess
         let ticker = stock.ticker
         var updatedStocks = [String: StockModel]()
         
@@ -329,7 +327,7 @@ extension StockViewController: StockManagerDelegate {
                 updatedStocks = self.trendingStocks
             }
         } else if segment == .favourite {
-            updatedStocks = StockFavourite.shared.favouriteStocks
+            updatedStocks = StockFavourite.shared.getFavouriteStocks()
         }
         
         guard updatedStocks[ticker] != nil else { return }
@@ -353,7 +351,7 @@ extension StockViewController: StockManagerDelegate {
     }
     
     func didBuildStockItem(_ stock: StockModel) {
-        let queue = Config.Queues.trendingStocksAccess
+        let queue = K.Queues.trendingStocksAccess
         let ticker = stock.ticker
         
         queue.sync {
@@ -456,7 +454,7 @@ extension StockViewController: SkeletonTableViewDataSource {
     
     func collectionSkeletonView(_ skeletonView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if selectedSegment == .trending {
-            let queue = Config.Queues.trendingStocksAccess
+            let queue = K.Queues.trendingStocksAccess
             var count = 0
             queue.sync {
                 count = trendingStocks.count

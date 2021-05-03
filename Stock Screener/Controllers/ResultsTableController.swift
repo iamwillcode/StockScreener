@@ -69,9 +69,9 @@ class ResultsTableController: UITableViewController {
         
         if let delta = stockItem.delta {
             if delta >= 0 {
-                cell.dayDelta.textColor = UIColor(named: K.Colors.Common.green)
+                cell.dayDelta.textColor = K.Colors.Common.green
             } else if delta < 0 {
-                cell.dayDelta.textColor = UIColor(named: K.Colors.Common.red)
+                cell.dayDelta.textColor = K.Colors.Common.red
             } else {
                 cell.dayDelta.textColor = .black
             }
@@ -93,10 +93,10 @@ class ResultsTableController: UITableViewController {
         checkIfStockIsFavourite(stockItem)
         
         if stockItem.isFavourite {
-            let image = UIImage(systemName: "star.fill")!.withTintColor(UIColor(named: K.Colors.Common.isFavourite)!, renderingMode: .alwaysOriginal)
+            let image = UIImage(systemName: "star.fill")!.withTintColor(K.Colors.Common.isFavourite, renderingMode: .alwaysOriginal)
             cell.favouriteButton.setImage(image, for: .normal)
         } else {
-            let image = UIImage(systemName: "star.fill")!.withTintColor(UIColor(named: K.Colors.Common.notFavourite)!, renderingMode: .alwaysOriginal)
+            let image = UIImage(systemName: "star.fill")!.withTintColor(K.Colors.Common.notFavourite, renderingMode: .alwaysOriginal)
             cell.favouriteButton.setImage(image, for: .normal)
         }
         
@@ -149,11 +149,11 @@ class ResultsTableController: UITableViewController {
     
     private func setupUI() {
         tableView.separatorStyle = .none
-        tableView.backgroundColor = UIColor(named: K.Colors.Background.main)
+        tableView.backgroundColor = K.Colors.Background.main
         
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = UIColor(named: K.Colors.Background.main)
+        appearance.backgroundColor = K.Colors.Background.main
         navigationItem.standardAppearance = appearance
         navigationItem.scrollEdgeAppearance = appearance
     }
@@ -197,14 +197,14 @@ class ResultsTableController: UITableViewController {
     }
     
     private func setupStockAsFavourite(for stock: StockModel) {
-        let queue = Config.Queues.searchResultStocksAccess
+        let queue = K.Queues.searchResultStocksAccess
         
         let ticker = stock.ticker
         
         var selectedStock = stock
         selectedStock.isFavourite = !selectedStock.isFavourite
         
-        queue.async {
+        queue.sync {
             if self.searchResultStocks[ticker] != nil {
                 self.searchResultStocks[ticker]!.isFavourite = !self.searchResultStocks[ticker]!.isFavourite
             }
@@ -226,7 +226,7 @@ class ResultsTableController: UITableViewController {
 extension ResultsTableController: StockManagerDelegate {
     
     func didUpdateStockItem(_ stock: StockModel, segment: StockSegments?) {
-        let queue = Config.Queues.searchResultStocksAccess
+        let queue = K.Queues.searchResultStocksAccess
         let ticker = stock.ticker
         var updatedStocks = [String: StockModel]()
         
@@ -251,7 +251,7 @@ extension ResultsTableController: StockManagerDelegate {
     }
     
     func didBuildStockItem(_ stock: StockModel) {
-        let queue = Config.Queues.searchResultStocksAccess
+        let queue = K.Queues.searchResultStocksAccess
         let ticker = stock.ticker
         
         queue.sync {

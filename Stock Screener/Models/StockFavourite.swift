@@ -2,8 +2,6 @@ import Foundation
 
 final class StockFavourite {
     
-    private(set) var favouriteStocks = [String: StockModel]()
-    
     static let shared: StockFavourite = {
         let instance = StockFavourite()
         return instance
@@ -11,7 +9,17 @@ final class StockFavourite {
     
     private init() {}
     
-    private let queue = Config.Queues.favouriteStocksAccess
+    private var favouriteStocks = [String: StockModel]()
+    
+    private let queue = K.Queues.favouriteStocksAccess
+    
+    func getFavouriteStocks() -> [String: StockModel] {
+        var safeFavouriteStocks = [String: StockModel]()
+        queue.sync {
+            safeFavouriteStocks = self.favouriteStocks
+        }
+        return safeFavouriteStocks
+    }
     
     func addToFavourite(stock: StockModel) {
         let ticker = stock.ticker

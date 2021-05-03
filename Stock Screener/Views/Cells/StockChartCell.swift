@@ -65,13 +65,15 @@ final class StockChartCell: UITableViewCell {
             chartDataSet.drawCirclesEnabled = false
             chartDataSet.mode = .cubicBezier
             chartDataSet.lineWidth = 3
-            chartDataSet.setColor(UIColor(named: K.Colors.Brand.main)!)
-            chartDataSet.fill = Fill(color: UIColor(named: K.Colors.Brand.main)!)
+            chartDataSet.setColor(K.Colors.Brand.main)
+            let gradientColors = [K.Colors.Brand.ternary.cgColor, K.Colors.Brand.main.cgColor]
+            let gradient = CGGradient(colorsSpace: nil, colors: gradientColors as CFArray, locations: nil)!
+            chartDataSet.fill = Fill(linearGradient: gradient, angle: 90)
             chartDataSet.fillAlpha = 0.5
             chartDataSet.drawFilledEnabled = true
             chartDataSet.drawHorizontalHighlightIndicatorEnabled = false
             chartDataSet.highlightEnabled = true
-            chartDataSet.highlightColor = UIColor(named: K.Colors.Brand.main)!
+            chartDataSet.highlightColor = K.Colors.Brand.main
             chartDataSet.highlightLineWidth = 2
             
             let data = LineChartData(dataSet: chartDataSet)

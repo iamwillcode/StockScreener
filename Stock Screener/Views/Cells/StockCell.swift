@@ -40,11 +40,11 @@ final class StockCell: UITableViewCell {
     
     private func setupUI() {
         self.translatesAutoresizingMaskIntoConstraints = false
-        self.backgroundColor = UIColor(named: K.Colors.Background.main)
+        self.backgroundColor = K.Colors.Background.main
         
         cellView.layer.cornerRadius = 12
         cellView.layer.masksToBounds = true
-        cellView.backgroundColor = UIColor(named: K.Colors.Background.main)
+        cellView.backgroundColor = K.Colors.Background.main
         
         companyLogo.layer.cornerRadius = 12
         companyLogo.layer.masksToBounds = true
