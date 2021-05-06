@@ -30,7 +30,7 @@ class StockViewController: UIViewController {
         if selectedSegment == .trending {
             return trendingStocks
         } else {
-            return StockFavourite.shared.getFavouriteStocks()
+            return StockFavourite.shared.getFavourite()
         }
     }
     
@@ -59,6 +59,8 @@ class StockViewController: UIViewController {
         setupSkeleton() 
         
         stockManager.getTrends()
+        
+        setupFavouriteStocks()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -153,6 +155,10 @@ class StockViewController: UIViewController {
             tableView.hideSkeleton(transition: .crossDissolve(0.25))
     }
     
+    private func setupFavouriteStocks() {
+        StockFavourite.shared.loadFavouriteFromRealm()
+    }
+    
     private func checkIfStockIsFavourite(_ stockItem: StockModel) {
         StockFavourite.shared.checkIfTickerIsFavourite(stock: stockItem) { [weak self] (result) in
             let ticker = stockItem.ticker
@@ -172,7 +178,7 @@ class StockViewController: UIViewController {
         }
     }
     
-    private func setupStockAsFavourite(for stock: StockModel) {
+    private func setStockAsFavourite(for stock: StockModel) {
         let queue = K.Queues.trendingStocksAccess
         
         let ticker = stock.ticker
@@ -195,10 +201,14 @@ class StockViewController: UIViewController {
         reloadTableView()
     }
     
-    @objc private func refreshPrice(sender: UIRefreshControl) {
-        for stock in sourceStocks {
-            stockManager.getPrice(for: stock.value, segment: selectedSegment)
+    private func getPriceForStocks(stocks: [String: StockModel], segment: StockSegments) {
+        for stock in stocks {
+            stockManager.getPrice(for: stock.value, segment: segment)
         }
+    }
+    
+    @objc private func refreshPrice(sender: UIRefreshControl) {
+        getPriceForStocks(stocks: sourceStocks, segment: selectedSegment)
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
              sender.endRefreshing()
         }
@@ -226,6 +236,7 @@ class StockViewController: UIViewController {
             DispatchQueue.main.async {
                 self.setupSegmentButtons()
             }
+            getPriceForStocks(stocks: StockFavourite.shared.getFavourite(), segment: .favourite)
             reloadTableView()
         }
     }
@@ -290,7 +301,7 @@ extension StockViewController: UITableViewDataSource {
         }
         
         cell.callbackOnFavouriteButton = {
-            self.setupStockAsFavourite(for: stockItem)
+            self.setStockAsFavourite(for: stockItem)
         }
         
         return cell
@@ -319,6 +330,7 @@ extension StockViewController: StockManagerDelegate {
     
     func didUpdateStockItem(_ stock: StockModel, segment: StockSegments?) {
         let queue = K.Queues.trendingStocksAccess
+        
         let ticker = stock.ticker
         var updatedStocks = [String: StockModel]()
         
@@ -327,7 +339,7 @@ extension StockViewController: StockManagerDelegate {
                 updatedStocks = self.trendingStocks
             }
         } else if segment == .favourite {
-            updatedStocks = StockFavourite.shared.getFavouriteStocks()
+            updatedStocks = StockFavourite.shared.getFavourite()
         }
         
         guard updatedStocks[ticker] != nil else { return }
@@ -344,7 +356,7 @@ extension StockViewController: StockManagerDelegate {
                 self.trendingStocks = updatedStocks
             }
         } else if segment == .favourite {
-            StockFavourite.shared.updateFavouriteStocks(to: updatedStocks)
+            StockFavourite.shared.updateFavourite(stock: updatedStocks[ticker]!)
         }
         
         reloadTableView()
@@ -380,7 +392,6 @@ extension StockViewController: StockManagerDelegate {
             print(error.localizedDescription)
         }
     }
-    
 }
 
 // MARK: - UISearchBarDelegate
@@ -418,7 +429,6 @@ extension StockViewController: UISearchBarDelegate {
         searchController.dismiss(animated: true, completion: nil)
         searchBar.text = ""
     }
-    
 }
 
 // MARK: - UISearchControllerDelegate
@@ -434,7 +444,6 @@ extension StockViewController: UISearchControllerDelegate {
             resultsController.clearResults()
         }
     }
-    
 }
 
 // MARK: - ResultsTableControllerDelegate
@@ -445,7 +454,6 @@ extension StockViewController: ResultsTableControllerDelegate {
         let detailVC = DetailViewController.detailViewControllerForStock(stock)
         navigationController?.pushViewController(detailVC, animated: true)
     }
-    
 }
 
 //MARK: - SkeletonTableViewDataSource
@@ -468,5 +476,4 @@ extension StockViewController: SkeletonTableViewDataSource {
     func collectionSkeletonView(_ skeletonView: UITableView, cellIdentifierForRowAt indexPath: IndexPath) -> ReusableCellIdentifier {
         return K.Cells.stock
     }
-    
 }

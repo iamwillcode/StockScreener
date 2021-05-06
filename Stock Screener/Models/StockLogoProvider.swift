@@ -9,29 +9,30 @@ class StockLogoProvider {
         if let cachedImage = imageCache.object(forKey: url.absoluteString as NSString) {
             completion(cachedImage)
         } else {
-            let request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.returnCacheDataElseLoad, timeoutInterval: 10)
-            let dataTask = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
-                
-                guard error == nil,
-                      data != nil,
-                      let response = response as? HTTPURLResponse,
-                      response.statusCode == 200,
-                      let strongSelf = self else {
-                    completion(nil)
-                    return
-                }
-                
-                if let image = UIImage(data: data!) {
-                    strongSelf.imageCache.setObject(image, forKey: url.absoluteString as NSString)
-                    DispatchQueue.main.async {
-                        completion(image)
+            DispatchQueue.global(qos: .utility).async {
+                let request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.returnCacheDataElseLoad, timeoutInterval: 10)
+                let dataTask = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+                    
+                    guard error == nil,
+                          data != nil,
+                          let response = response as? HTTPURLResponse,
+                          response.statusCode == 200,
+                          let strongSelf = self else {
+                        completion(nil)
+                        return
                     }
-                } else {
-                    completion(nil)
+                    
+                    if let image = UIImage(data: data!) {
+                        strongSelf.imageCache.setObject(image, forKey: url.absoluteString as NSString)
+                        DispatchQueue.main.async {
+                            completion(image)
+                        }
+                    } else {
+                        completion(nil)
+                    }
                 }
+                dataTask.resume()
             }
-            dataTask.resume()
         }
     }
-    
 }

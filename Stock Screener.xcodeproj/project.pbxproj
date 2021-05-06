@@ -13,6 +13,8 @@
 		8428FB9F2614EBF300C186CB /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8428FB9E2614EBF300C186CB /* Constants.swift */; };
 		84475E05262C8632004B7E99 /* ShadowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84475E04262C8632004B7E99 /* ShadowView.swift */; };
 		845E3A8E262F4EF40089272C /* StockSegments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845E3A8D262F4EF40089272C /* StockSegments.swift */; };
+		846D167C2641B12E006DA72B /* StockModelObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846D167B2641B12E006DA72B /* StockModelObject.swift */; };
+		846D167F2641B18A006DA72B /* StockObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846D167E2641B18A006DA72B /* StockObject.swift */; };
 		847E85B3261A411000E9969F /* StockFavourite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847E85B2261A411000E9969F /* StockFavourite.swift */; };
 		84887991263AD99800CA54B3 /* StockLogoProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84887990263AD99800CA54B3 /* StockLogoProvider.swift */; };
 		848BF1E026231BCD003D7E07 /* StockNewsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848BF1DE26231BCC003D7E07 /* StockNewsCell.swift */; };
@@ -46,6 +48,8 @@
 		8428FB9E2614EBF300C186CB /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		84475E04262C8632004B7E99 /* ShadowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShadowView.swift; sourceTree = "<group>"; };
 		845E3A8D262F4EF40089272C /* StockSegments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockSegments.swift; sourceTree = "<group>"; };
+		846D167B2641B12E006DA72B /* StockModelObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockModelObject.swift; sourceTree = "<group>"; };
+		846D167E2641B18A006DA72B /* StockObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockObject.swift; sourceTree = "<group>"; };
 		847E85B2261A411000E9969F /* StockFavourite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockFavourite.swift; sourceTree = "<group>"; };
 		84887990263AD99800CA54B3 /* StockLogoProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockLogoProvider.swift; sourceTree = "<group>"; };
 		848BF1DE26231BCC003D7E07 /* StockNewsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockNewsCell.swift; sourceTree = "<group>"; };
@@ -116,6 +120,15 @@
 			path = Cells;
 			sourceTree = "<group>";
 		};
+		846D16792641AFE8006DA72B /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				846D167B2641B12E006DA72B /* StockModelObject.swift */,
+				846D167E2641B18A006DA72B /* StockObject.swift */,
+			);
+			path = Entities;
+			sourceTree = "<group>";
+		};
 		84A784A025FE87CC000E3FDE = {
 			isa = PBXGroup;
 			children = (
@@ -139,6 +152,7 @@
 			children = (
 				84A784AC25FE87CC000E3FDE /* AppDelegate.swift */,
 				84A784AE25FE87CC000E3FDE /* SceneDelegate.swift */,
+				846D16792641AFE8006DA72B /* Entities */,
 				84A784C52601406C000E3FDE /* Models */,
 				84A784C626014079000E3FDE /* Views */,
 				84A784C326014055000E3FDE /* Controllers */,
@@ -314,6 +328,7 @@
 				84D2C45F2618C49F0031B14A /* Config.swift in Sources */,
 				84A784CF26079303000E3FDE /* StockNetwork.swift in Sources */,
 				84C719392610EEC10000D0C2 /* StockFormatter.swift in Sources */,
+				846D167C2641B12E006DA72B /* StockModelObject.swift in Sources */,
 				84A78503260A6BD6000E3FDE /* StockError.swift in Sources */,
 				8428FB9B2613A72100C186CB /* StockManager.swift in Sources */,
 				84A784ED2607968C000E3FDE /* StockCell.swift in Sources */,
@@ -321,6 +336,7 @@
 				845E3A8E262F4EF40089272C /* StockSegments.swift in Sources */,
 				84E3ED032622122D0037272E /* StockNewsModel.swift in Sources */,
 				84887991263AD99800CA54B3 /* StockLogoProvider.swift in Sources */,
+				846D167F2641B18A006DA72B /* StockObject.swift in Sources */,
 				84E3ECFF262200C00037272E /* ChartView.swift in Sources */,
 				84A784AD25FE87CC000E3FDE /* AppDelegate.swift in Sources */,
 				84D71B0E261B728000D4EC9C /* StockChartCell.swift in Sources */,

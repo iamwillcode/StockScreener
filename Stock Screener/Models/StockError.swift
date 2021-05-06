@@ -4,6 +4,7 @@ enum StockError: Error {
     case requestError
     case sessionTaskError(Error?)
     case decodeError
+    case timeout
     case urlError
     case tickerPriceError(String)
     case tickerLogoError(String)
@@ -28,6 +29,11 @@ extension StockError: LocalizedError {
         case .decodeError:
             return NSLocalizedString(
                 "Can't decode JSON.",
+                comment: ""
+            )
+        case .timeout:
+            return NSLocalizedString(
+                "Request is timed out.",
                 comment: ""
             )
         case .urlError:
@@ -57,5 +63,4 @@ extension StockError: LocalizedError {
             )
         }
     }
-    
 }

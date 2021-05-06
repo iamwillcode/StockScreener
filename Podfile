@@ -8,5 +8,6 @@ target 'Stock Screener' do
   # Pods for Stock Screener
   pod 'Charts'
   pod 'SkeletonView'
+  pod 'RealmSwift', '=10.1.4'
 
 end
