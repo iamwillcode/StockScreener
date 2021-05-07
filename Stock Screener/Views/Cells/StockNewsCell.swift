@@ -13,6 +13,19 @@ class StockNewsCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        
+        setupUI()
     }
 
+    //MARK: - Private methods
+    
+    private func setupUI() {
+        self.backgroundColor = K.Colors.Background.secondary
+        
+        selectedBackgroundView = {
+            let view = UIView.init()
+            view.backgroundColor = K.Colors.Text.secondary
+            return view
+        }()
+    }
 }

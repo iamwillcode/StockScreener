@@ -14,12 +14,17 @@ struct K {
         struct Brand {
             static let main = UIColor(named: "MainBrandColor")!
             static let secondary = UIColor(named: "SecondaryBrandColor")!
-            static let ternary = UIColor(named: "TernaryBrandColor")!
         }
         
         struct Background {
             static let main = UIColor(named: "MainBackgroundColor")!
             static let secondary = UIColor(named: "SecondaryBackgroundColor")!
+        }
+        
+        struct Text {
+            static let main = UIColor(named: "MainFontColor")!
+            static let secondary = UIColor(named: "SecondaryFontColor")!
+            static let ternary = UIColor(named: "TernaryFontColor")!
         }
         
         struct Common {

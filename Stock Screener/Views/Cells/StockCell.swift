@@ -18,7 +18,7 @@ final class StockCell: UITableViewCell {
     @IBOutlet var dayDelta: UILabel!
     @IBOutlet var favouriteButton: UIButton!
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
-
+    
     // MARK: - Public Properties
     
     var callbackOnFavouriteButton : (()->())?
@@ -40,16 +40,27 @@ final class StockCell: UITableViewCell {
     
     private func setupUI() {
         self.translatesAutoresizingMaskIntoConstraints = false
-        self.backgroundColor = K.Colors.Background.main
+        self.backgroundColor = K.Colors.Background.secondary
         
         cellView.layer.cornerRadius = 12
         cellView.layer.masksToBounds = true
         cellView.backgroundColor = K.Colors.Background.main
         
+        ticker.textColor = K.Colors.Text.ternary
+        companyName.textColor = K.Colors.Text.ternary
+        currentPrice.textColor = K.Colors.Text.ternary
+        dayDelta.textColor = K.Colors.Text.ternary
+        
         companyLogo.layer.cornerRadius = 12
         companyLogo.layer.masksToBounds = true
         
         activityIndicator.hidesWhenStopped = true
+        
+        selectedBackgroundView = {
+            let view = UIView.init()
+            view.backgroundColor = K.Colors.Text.secondary
+            return view
+        }()
     }
     
     private func setupSkeleton() {

@@ -76,12 +76,24 @@ class DetailViewController: UIViewController {
         tableView.register(UINib(nibName: K.Cells.news, bundle: nil), forCellReuseIdentifier: K.Cells.news)
     }
     
-    private func setupUI() {
+    private func setupUI() {    
         title = detailedStock.ticker
         
         tableView.separatorStyle = .none
         tableView.estimatedRowHeight = 100
         tableView.rowHeight = UITableView.automaticDimension
+        tableView.backgroundColor = K.Colors.Background.secondary
+        
+        navigationController?.navigationBar.tintColor = K.Colors.Text.main
+        navigationController?.navigationBar.prefersLargeTitles = true
+        
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = K.Colors.Brand.main
+        appearance.largeTitleTextAttributes = [.foregroundColor: K.Colors.Text.main]
+        appearance.shadowColor = .none
+        navigationItem.standardAppearance = appearance
+        navigationItem.scrollEdgeAppearance = appearance
         
         let backBarButtton = UIBarButtonItem(title: "Back", style: .plain, target: nil, action: nil)
         navigationItem.backBarButtonItem = backBarButtton
@@ -92,7 +104,7 @@ class DetailViewController: UIViewController {
             let image = UIImage(systemName: "star.fill")!.withTintColor(K.Colors.Common.isFavourite, renderingMode: .alwaysOriginal)
             favouriteButton.setImage(image, for: .normal)
         } else {
-            let image = UIImage(systemName: "star.fill")!.withTintColor(K.Colors.Common.notFavourite, renderingMode: .alwaysOriginal)
+            let image = UIImage(systemName: "star.fill")!.withTintColor(K.Colors.Background.main, renderingMode: .alwaysOriginal)
             favouriteButton.setImage(image, for: .normal)
         }
     }
@@ -129,7 +141,7 @@ class DetailViewController: UIViewController {
             setupFavouriteButton()
         }
     }
-
+    
 }
 
 //MARK: - UITableViewDataSource
@@ -183,6 +195,12 @@ extension DetailViewController: UITableViewDataSource {
             
             return cell
         }
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        guard view is UITableViewHeaderFooterView else { return }
+        (view as! UITableViewHeaderFooterView).contentView.backgroundColor = K.Colors.Brand.secondary
+        (view as! UITableViewHeaderFooterView).textLabel?.textColor = K.Colors.Text.main
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {

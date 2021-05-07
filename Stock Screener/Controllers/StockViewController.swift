@@ -34,7 +34,11 @@ class StockViewController: UIViewController {
         }
     }
     
-    private var trendingIsBuilded = false
+    private var trendingIsBuilded = false {
+        didSet {
+            
+        }
+    }
     
     // MARK: - Lifecycle
     
@@ -78,6 +82,7 @@ class StockViewController: UIViewController {
         DispatchQueue.main.async {
             if self.trendingIsBuilded, self.tableView.isSkeletonActive {
                 self.hideSkeleton()
+                print("tablaViewa")
             }
             self.tableView.reloadData()
         }
@@ -94,7 +99,6 @@ class StockViewController: UIViewController {
         searchController = UISearchController(searchResultsController: resultsTableController)
         
         searchController.searchBar.autocapitalizationType = .none
-        searchController.searchBar.searchTextField.placeholder = NSLocalizedString("Ticker or company name", comment: "")
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.returnKeyType = .search
         definesPresentationContext = true
@@ -107,21 +111,44 @@ class StockViewController: UIViewController {
     }
     
     private func setupUI() {
-        view.backgroundColor = K.Colors.Brand.ternary
+        view.backgroundColor = K.Colors.Brand.main
         
         tableView.separatorStyle = .none
-        tableView.backgroundColor = K.Colors.Background.main
+        tableView.backgroundColor = K.Colors.Background.secondary
         
-        segmentsView.backgroundColor = K.Colors.Brand.ternary
+        segmentsView.backgroundColor = K.Colors.Brand.main
         
-        navigationItem.title = "Stock"
+        tableViewRefreshControl.tintColor = K.Colors.Brand.secondary
         
-        self.navigationController!.navigationBar.tintColor = K.Colors.Brand.main
+        let searchBar = searchController.searchBar
+        searchBar.isTranslucent = false
+        
+        let searchTextField = searchBar.searchTextField
+        searchTextField.backgroundColor = K.Colors.Brand.main
+        searchTextField.textColor = K.Colors.Text.main
+        searchTextField.attributedPlaceholder = NSAttributedString(string: "Ticker or company name", attributes: [NSAttributedString.Key.foregroundColor: K.Colors.Text.secondary])
+        
+        if let glassIconView = searchTextField.leftView as? UIImageView {
+            glassIconView.image = glassIconView.image?.withRenderingMode(.alwaysTemplate)
+            glassIconView.tintColor = K.Colors.Text.main
+        }
+        
+        if let clearButton = searchTextField.value(forKey: "_clearButton") as? UIButton {
+            let templateImage =  clearButton.imageView?.image?.withRenderingMode(.alwaysTemplate)
+            clearButton.setImage(templateImage, for: .normal)
+            clearButton.tintColor = K.Colors.Text.main
+        }
+        
+        navigationItem.title = "Stock Screener"
+        
+        navigationController?.navigationBar.tintColor = K.Colors.Text.main
+        navigationController?.navigationBar.prefersLargeTitles = true
         
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = K.Colors.Brand.ternary
-        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.black]
+        appearance.backgroundColor = K.Colors.Brand.main
+        appearance.largeTitleTextAttributes = [.foregroundColor: K.Colors.Text.main]
+        appearance.shadowColor = .none
         navigationItem.standardAppearance = appearance
         navigationItem.scrollEdgeAppearance = appearance
         
@@ -133,10 +160,10 @@ class StockViewController: UIViewController {
         guard let title = button.titleLabel else { return }
         if title.text == selectedSegment.rawValue {
             title.font = UIFont.boldSystemFont(ofSize: 20)
-            button.setTitleColor(.black, for: .normal)
+            button.setTitleColor(K.Colors.Text.main, for: .normal)
         } else {
             title.font = UIFont.systemFont(ofSize: 16)
-            button.setTitleColor(.gray, for: .normal)
+            button.setTitleColor(K.Colors.Text.secondary, for: .normal)
         }
     }
     
@@ -147,7 +174,7 @@ class StockViewController: UIViewController {
     
     private func setupSkeleton() {
         tableView.isSkeletonable = true
-        let gradient = SkeletonGradient(baseColor: K.Colors.Brand.ternary)
+        let gradient = SkeletonGradient(baseColor: K.Colors.Background.secondary)
         tableView.showAnimatedGradientSkeleton(usingGradient: gradient)
     }
     
@@ -240,7 +267,6 @@ class StockViewController: UIViewController {
             reloadTableView()
         }
     }
-    
 }
 
 // MARK: - UITableViewDataSource
@@ -313,11 +339,13 @@ extension StockViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if cell.isSkeletonActive, trendingIsBuilded == true {
+        // fixing SkeletonView bug when skeleton isn't hiding on the invisible cell
+        if cell.isSkeletonActive,
+           trendingIsBuilded == true,
+           !(tableView.indexPathsForVisibleRows?.contains(indexPath) ?? false) {
             cell.hideSkeleton(transition: .crossDissolve(0.25))
         }
     }
-    
 }
 
 //MARK: - UITableViewDelegate

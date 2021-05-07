@@ -35,16 +35,17 @@ final class StockChartCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         
+        setupUI()
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setupCell()
+        setupConstraints()
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        setupCell()
+        setupConstraints()
     }
     
     //MARK: - Public Methods
@@ -66,7 +67,7 @@ final class StockChartCell: UITableViewCell {
             chartDataSet.mode = .cubicBezier
             chartDataSet.lineWidth = 3
             chartDataSet.setColor(K.Colors.Brand.main)
-            let gradientColors = [K.Colors.Brand.ternary.cgColor, K.Colors.Brand.main.cgColor]
+            let gradientColors = [K.Colors.Background.secondary.cgColor, K.Colors.Brand.main.cgColor]
             let gradient = CGGradient(colorsSpace: nil, colors: gradientColors as CFArray, locations: nil)!
             chartDataSet.fill = Fill(linearGradient: gradient, angle: 90)
             chartDataSet.fillAlpha = 0.5
@@ -75,6 +76,7 @@ final class StockChartCell: UITableViewCell {
             chartDataSet.highlightEnabled = true
             chartDataSet.highlightColor = K.Colors.Brand.main
             chartDataSet.highlightLineWidth = 2
+            chartDataSet.valueTextColor = K.Colors.Text.ternary
             
             let data = LineChartData(dataSet: chartDataSet)
             data.setDrawValues(false)
@@ -88,7 +90,11 @@ final class StockChartCell: UITableViewCell {
     
     //MARK: - Private methods
     
-    private func setupCell() {
+    private func setupUI() {
+        self.backgroundColor = K.Colors.Background.secondary
+    }
+    
+    private func setupConstraints() {
         self.heightAnchor.constraint(equalToConstant: 300).isActive = true
         
         self.addSubview(stockChartView)

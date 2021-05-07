@@ -2,7 +2,6 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="jt8-QL-Nax">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -34,20 +33,20 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="q2t-7b-rpc">
-                                <rect key="frame" x="0.0" y="140" width="414" height="50"/>
+                                <rect key="frame" x="0.0" y="140" width="414" height="40"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="bottom" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="Ji6-vs-usR">
-                                        <rect key="frame" x="10" y="0.0" width="394" height="45"/>
+                                        <rect key="frame" x="10" y="5" width="394" height="30"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DBb-38-LG2">
-                                                <rect key="frame" x="0.0" y="15" width="192" height="30"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="192" height="30"/>
                                                 <state key="normal" title="Trending"/>
                                                 <connections>
                                                     <action selector="changeSourceToTrending:" destination="xkS-lM-1EE" eventType="touchUpInside" id="lR0-5e-vaI"/>
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DOh-uM-2eG">
-                                                <rect key="frame" x="202" y="15" width="192" height="30"/>
+                                                <rect key="frame" x="202" y="0.0" width="192" height="30"/>
                                                 <state key="normal" title="Favourite"/>
                                                 <connections>
                                                     <action selector="changeSourceToFavourite:" destination="xkS-lM-1EE" eventType="touchUpInside" id="0jz-g7-IfE"/>
@@ -57,15 +56,15 @@
                                     </stackView>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="U5V-nF-K1Z"/>
+                                    <constraint firstAttribute="height" constant="40" id="U5V-nF-K1Z"/>
                                     <constraint firstItem="Ji6-vs-usR" firstAttribute="leading" secondItem="q2t-7b-rpc" secondAttribute="leading" constant="10" id="cg9-ih-aUC"/>
                                     <constraint firstAttribute="trailing" secondItem="Ji6-vs-usR" secondAttribute="trailing" constant="10" id="eAc-c9-B6x"/>
                                     <constraint firstAttribute="bottom" secondItem="Ji6-vs-usR" secondAttribute="bottom" constant="5" id="lv4-E4-yY8"/>
-                                    <constraint firstItem="Ji6-vs-usR" firstAttribute="top" secondItem="q2t-7b-rpc" secondAttribute="top" id="qai-BZ-BO7"/>
+                                    <constraint firstItem="Ji6-vs-usR" firstAttribute="top" secondItem="q2t-7b-rpc" secondAttribute="top" constant="5" id="qai-BZ-BO7"/>
                                 </constraints>
                             </view>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="pbQ-t0-rMX">
-                                <rect key="frame" x="0.0" y="190" width="414" height="672"/>
+                                <rect key="frame" x="0.0" y="180" width="414" height="716"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </tableView>
                         </subviews>
@@ -78,7 +77,7 @@
                             <constraint firstAttribute="trailing" secondItem="pbQ-t0-rMX" secondAttribute="trailing" id="AHH-gK-UNP"/>
                             <constraint firstAttribute="trailing" secondItem="q2t-7b-rpc" secondAttribute="trailing" id="GbL-A8-5SW"/>
                             <constraint firstItem="q2t-7b-rpc" firstAttribute="leading" secondItem="2IO-Xv-1x3" secondAttribute="leading" id="gkh-s1-f49"/>
-                            <constraint firstItem="pbQ-t0-rMX" firstAttribute="bottom" secondItem="q9d-mf-iRn" secondAttribute="bottom" id="ybI-RU-93N"/>
+                            <constraint firstItem="pbQ-t0-rMX" firstAttribute="bottom" secondItem="2IO-Xv-1x3" secondAttribute="bottom" id="ybI-RU-93N"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" largeTitleDisplayMode="always" id="8V4-pK-epk"/>
@@ -103,24 +102,25 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="tgS-XL-guB">
-                                <rect key="frame" x="0.0" y="140" width="414" height="722"/>
+                                <rect key="frame" x="0.0" y="140" width="414" height="756"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </tableView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="uk4-gb-FOU"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="uk4-gb-FOU" firstAttribute="bottom" secondItem="tgS-XL-guB" secondAttribute="bottom" id="EpF-8e-dMo"/>
                             <constraint firstItem="tgS-XL-guB" firstAttribute="top" secondItem="uk4-gb-FOU" secondAttribute="top" id="K8B-9L-y9u"/>
                             <constraint firstItem="tgS-XL-guB" firstAttribute="leading" secondItem="uk4-gb-FOU" secondAttribute="leading" id="bQb-HX-Y9S"/>
+                            <constraint firstAttribute="bottom" secondItem="tgS-XL-guB" secondAttribute="bottom" id="enf-NC-C6n"/>
                             <constraint firstItem="tgS-XL-guB" firstAttribute="trailing" secondItem="uk4-gb-FOU" secondAttribute="trailing" id="ko0-Ux-8sP"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" largeTitleDisplayMode="always" id="Fy4-hq-jID">
                         <barButtonItem key="rightBarButtonItem" style="done" id="zFQ-sC-ZdP">
                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="5tu-1s-Mcy">
-                                <rect key="frame" x="318" y="11" width="76" height="22"/>
+                                <rect key="frame" x="318" y="5" width="76" height="34"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                 <connections>
                                     <action selector="setFavourite:" destination="kgh-bj-1fI" eventType="touchUpInside" id="7Bk-cD-bgW"/>
                                 </connections>

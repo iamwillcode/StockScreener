@@ -149,7 +149,7 @@ class ResultsTableController: UITableViewController {
     
     private func setupUI() {
         tableView.separatorStyle = .none
-        tableView.backgroundColor = K.Colors.Background.main
+        tableView.backgroundColor = K.Colors.Background.secondary
         
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
@@ -218,7 +218,6 @@ class ResultsTableController: UITableViewController {
         
         reloadTableView()
     }
-    
 }
 
 //MARK: - StockManagerDelegate
@@ -287,5 +286,4 @@ extension ResultsTableController: StockManagerDelegate {
             print(error.localizedDescription)
         }
     }
-    
 }
