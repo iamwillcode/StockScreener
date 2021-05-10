@@ -110,7 +110,7 @@ struct StockManager {
         }
     }
     
-    func getChartData (for ticker: String, completion: @escaping ([Double]) -> Void) {
+    func getChartData (for ticker: String, completion: @escaping ([Double], [Double]) -> Void) {
         let currentTimestamp = Int(Date().timeIntervalSince1970)
         let monthAgoTimestamp = currentTimestamp - 2592000
         
@@ -125,8 +125,8 @@ struct StockManager {
                 case .failure (let error):
                     self.delegate?.didFailWithError(error)
                 case .success (let stockData):
-                    if let chartData = stockData.h {
-                        completion(chartData)
+                    if let price = stockData.c, let timestamp = stockData.t {
+                        completion(price, timestamp)
                     }
                 }
             }
@@ -135,7 +135,7 @@ struct StockManager {
     
     func getNews (for ticker: String, completion: @escaping ([StockNewsModel]) -> Void) {
         let URL = "\(Config.Api.news)\(ticker)/news?token=\(Config.Api.newsKey)"
-        
+
         DispatchQueue.global(qos: .utility).async {
             
             let result: Result<[StockData.News], StockError> = stockNetwork.performRequest(with: URL)

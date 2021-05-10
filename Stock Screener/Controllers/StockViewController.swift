@@ -34,11 +34,7 @@ class StockViewController: UIViewController {
         }
     }
     
-    private var trendingIsBuilded = false {
-        didSet {
-            
-        }
-    }
+    private var trendingIsBuilded = false
     
     // MARK: - Lifecycle
     
@@ -82,7 +78,6 @@ class StockViewController: UIViewController {
         DispatchQueue.main.async {
             if self.trendingIsBuilded, self.tableView.isSkeletonActive {
                 self.hideSkeleton()
-                print("tablaViewa")
             }
             self.tableView.reloadData()
         }
@@ -139,10 +134,11 @@ class StockViewController: UIViewController {
             clearButton.tintColor = K.Colors.Text.main
         }
         
-        navigationItem.title = "Stock Screener"
-        
-        navigationController?.navigationBar.tintColor = K.Colors.Text.main
-        navigationController?.navigationBar.prefersLargeTitles = true
+        if let navigationBar = navigationController?.navigationBar {
+            navigationBar.tintColor = K.Colors.Text.main
+            navigationBar.prefersLargeTitles = true
+            navigationBar.barStyle = .black
+        }
         
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
@@ -151,6 +147,8 @@ class StockViewController: UIViewController {
         appearance.shadowColor = .none
         navigationItem.standardAppearance = appearance
         navigationItem.scrollEdgeAppearance = appearance
+        navigationItem.title = "Stock Screener"
+        navigationItem.largeTitleDisplayMode = .always
         
         let backBarButtton = UIBarButtonItem(title: "Back", style: .plain, target: nil, action: nil)
         navigationItem.backBarButtonItem = backBarButtton
@@ -158,6 +156,8 @@ class StockViewController: UIViewController {
     
     private func setupSegmentButtonUI(_ button: UIButton) {
         guard let title = button.titleLabel else { return }
+        button.contentHorizontalAlignment = UIControl.ContentHorizontalAlignment.left
+        button.contentVerticalAlignment = UIControl.ContentVerticalAlignment.bottom
         if title.text == selectedSegment.rawValue {
             title.font = UIFont.boldSystemFont(ofSize: 20)
             button.setTitleColor(K.Colors.Text.main, for: .normal)
@@ -175,11 +175,12 @@ class StockViewController: UIViewController {
     private func setupSkeleton() {
         tableView.isSkeletonable = true
         let gradient = SkeletonGradient(baseColor: K.Colors.Background.secondary)
-        tableView.showAnimatedGradientSkeleton(usingGradient: gradient)
+        let animation = GradientDirection.leftRight.slidingAnimation()
+        tableView.showAnimatedGradientSkeleton(usingGradient: gradient, animation: animation)
     }
     
     private func hideSkeleton() {
-            tableView.hideSkeleton(transition: .crossDissolve(0.25))
+        tableView.hideSkeleton(transition: .crossDissolve(0.25))
     }
     
     private func setupFavouriteStocks() {
@@ -237,7 +238,7 @@ class StockViewController: UIViewController {
     @objc private func refreshPrice(sender: UIRefreshControl) {
         getPriceForStocks(stocks: sourceStocks, segment: selectedSegment)
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
-             sender.endRefreshing()
+            sender.endRefreshing()
         }
     }
     
@@ -252,6 +253,9 @@ class StockViewController: UIViewController {
             selectedSegment = .trending
             DispatchQueue.main.async {
                 self.setupSegmentButtons()
+                if self.trendingIsBuilded == false {
+                    self.setupSkeleton()
+                }
             }
             reloadTableView()
         }
@@ -262,6 +266,9 @@ class StockViewController: UIViewController {
             selectedSegment = .favourite
             DispatchQueue.main.async {
                 self.setupSegmentButtons()
+                if self.tableView.isSkeletonActive {
+                    self.hideSkeleton()
+                }
             }
             getPriceForStocks(stocks: StockFavourite.shared.getFavourite(), segment: .favourite)
             reloadTableView()
@@ -297,7 +304,7 @@ extension StockViewController: UITableViewDataSource {
             } else if delta < 0 {
                 cell.dayDelta.textColor = K.Colors.Common.red
             } else {
-                cell.dayDelta.textColor = .black
+                cell.dayDelta.textColor = K.Colors.Text.ternary
             }
         }
         
@@ -431,6 +438,7 @@ extension StockViewController: UISearchBarDelegate {
             if let resultsController = searchController.searchResultsController as? ResultsTableController {
                 let formattedQuery = searchQuery.replacingOccurrences(of: "[^A-Za-z0-9.,/-()*@!+]+", with: "", options: .regularExpression)
                 resultsController.searchQuery = formattedQuery
+                resultsController.clearResults()
                 NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(self.performStockSearch), object: searchBar)
                 perform(#selector(self.performStockSearch), with: searchBar, afterDelay: 0.75)
             }
@@ -447,6 +455,7 @@ extension StockViewController: UISearchBarDelegate {
             if let resultsController = searchController.searchResultsController as? ResultsTableController {
                 let formattedQuery = searchQuery.replacingOccurrences(of: "[^A-Za-z0-9.,/-()*@!+]+", with: "", options: .regularExpression)
                 resultsController.searchQuery = formattedQuery
+                resultsController.clearResults()
                 NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(self.performStockSearch), object: searchBar)
                 performStockSearch()
             }
@@ -480,7 +489,8 @@ extension StockViewController: ResultsTableControllerDelegate {
     
     func didSelectStock(stock: StockModel) {
         let detailVC = DetailViewController.detailViewControllerForStock(stock)
-        navigationController?.pushViewController(detailVC, animated: true)
+        navigationController?.pushViewController(detailVC, animated: false)
+        
     }
 }
 

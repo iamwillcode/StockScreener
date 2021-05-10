@@ -3,17 +3,35 @@ import Charts
 
 final class StockChartCell: UITableViewCell {
     
+    // Use to convert x-axis labels from UNIX-timestamp to date when initialize Chart View
+    
+    final class XAxisLabelFormatter: NSObject, IAxisValueFormatter {
+        
+        func stringForValue( _ value: Double, axis _: AxisBase?) -> String {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "dd.MM"
+            let formattedDate = formatter.string(from: Date(timeIntervalSince1970: value))
+            return formattedDate
+        }
+    }
+    
     //MARK: - Public properties
     
     lazy var stockChartView: LineChartView = {
         let chartView = ChartView()
         chartView.leftAxis.enabled = false
         chartView.xAxis.enabled = false
+        chartView.xAxis.labelPosition = .bottomInside
+        chartView.xAxis.granularity = 1
+        chartView.xAxis.valueFormatter = XAxisLabelFormatter()
+        chartView.xAxis.labelTextColor = K.Colors.Text.ternary
+        chartView.xAxis.drawAxisLineEnabled = false
+        chartView.xAxis.labelCount = 8
         chartView.rightAxis.enabled = false
-        chartView.noDataText = "Waiting for the chart data..."
         chartView.legend.enabled = false
         chartView.dragEnabled = true
         chartView.setScaleEnabled(false)
+        chartView.noDataText = "Waiting for the chart data..."
         return chartView
     }()
     
@@ -40,34 +58,56 @@ final class StockChartCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setupConstraints()
+        
+        setupLayout()
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        setupConstraints()
+        
+        setupLayout()
     }
     
     //MARK: - Public Methods
     
     func setData(for ticker: String, completion: @escaping (Bool) -> Void) {
+        
         var entries = [ChartDataEntry]()
         
-        self.stockManager.getChartData(for: ticker) { (result) in
-            var n: Double = 0
+        stockManager.getChartData(for: ticker) { (prices, timestamps) in
             
-            for element in result {
-                let chartDataEntry = ChartDataEntry(x: n, y: element)
-                n += 1
+            // Convert two arrays into array of tuples
+            
+            let axisData = zip(timestamps, prices).map { ($0, $1) }
+            
+            // Initialize Chart Data Entries from axisData elements
+            
+            for (xAxisData, yAxisData) in axisData {
+                let chartDataEntry = ChartDataEntry(x: xAxisData, y: yAxisData)
                 entries.append(chartDataEntry)
             }
             
-            let chartDataSet = LineChartDataSet(entries: entries, label: "Highest price")
+            // Setup the chart color by calculating a median of prices
+            
+            let median = prices.sorted(by: <)[prices.count / 2]
+            
+            var chartColor: UIColor {
+                let lastPrice = entries[entries.count - 1].y
+                if lastPrice >= median {
+                    return K.Colors.Common.green
+                } else {
+                    return K.Colors.Common.red
+                }
+            }
+            
+            // Setup Chart Data Set
+            
+            let chartDataSet = LineChartDataSet(entries: entries, label: "Price change")
             chartDataSet.drawCirclesEnabled = false
             chartDataSet.mode = .cubicBezier
             chartDataSet.lineWidth = 3
-            chartDataSet.setColor(K.Colors.Brand.main)
-            let gradientColors = [K.Colors.Background.secondary.cgColor, K.Colors.Brand.main.cgColor]
+            chartDataSet.setColor(chartColor)
+            let gradientColors = [K.Colors.Background.secondary.cgColor, chartColor.cgColor]
             let gradient = CGGradient(colorsSpace: nil, colors: gradientColors as CFArray, locations: nil)!
             chartDataSet.fill = Fill(linearGradient: gradient, angle: 90)
             chartDataSet.fillAlpha = 0.5
@@ -77,6 +117,8 @@ final class StockChartCell: UITableViewCell {
             chartDataSet.highlightColor = K.Colors.Brand.main
             chartDataSet.highlightLineWidth = 2
             chartDataSet.valueTextColor = K.Colors.Text.ternary
+            
+            // Setup Chart Data
             
             let data = LineChartData(dataSet: chartDataSet)
             data.setDrawValues(false)
@@ -92,9 +134,15 @@ final class StockChartCell: UITableViewCell {
     
     private func setupUI() {
         self.backgroundColor = K.Colors.Background.secondary
+        
+        selectedBackgroundView = {
+            let view = UIView.init()
+            view.backgroundColor = .clear
+            return view
+        }()
     }
     
-    private func setupConstraints() {
+    private func setupLayout() {
         self.heightAnchor.constraint(equalToConstant: 300).isActive = true
         
         self.addSubview(stockChartView)

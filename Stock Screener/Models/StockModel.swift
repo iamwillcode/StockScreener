@@ -27,12 +27,12 @@ struct StockModel {
     
     var formattedPrice: String? {
         guard currentPrice != 0 else {return "-"}
-        return formatter.formatPrice(currentPrice)
+        return formatter.formattedPrice(currentPrice)
     }
     
     var formattedDayDelta: String? {
-        let formattedDelta = formatter.formatDelta(delta)
-        let formattedPercentDelta = formatter.formatPercentDelta(percentDelta)
+        let formattedDelta = formatter.formattedDelta(delta)
+        let formattedPercentDelta = formatter.formattedPercentDelta(percentDelta)
         return formattedDelta + formattedPercentDelta
     }
     

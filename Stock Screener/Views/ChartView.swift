@@ -25,8 +25,10 @@ final class ChartView: LineChartView {
             let highlight = self.getHighlightByTouchPoint(position)
             let dataSet = self.getDataSetByTouchPoint(point: position)
             dataSet?.drawValuesEnabled = true
+            self.xAxis.enabled = true
             highlightValue(highlight)
         } else {
+            self.xAxis.enabled = false
             data?.dataSets.forEach{ $0.drawValuesEnabled = false }
             highlightValue(nil)
         }

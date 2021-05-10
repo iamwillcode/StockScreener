@@ -151,6 +151,10 @@ class ResultsTableController: UITableViewController {
         tableView.separatorStyle = .none
         tableView.backgroundColor = K.Colors.Background.secondary
         
+        if let navigationBar = navigationController?.navigationBar {
+            navigationBar.barStyle = .black
+        }
+        
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = K.Colors.Background.main

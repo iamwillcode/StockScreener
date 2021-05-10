@@ -7,6 +7,11 @@ class DetailViewController: UIViewController {
     
     @IBOutlet var tableView: UITableView!
     @IBOutlet var favouriteButton: UIButton!
+    @IBOutlet var titleView: UIView!
+    @IBOutlet var ticker: UILabel!
+    @IBOutlet var companyName: UILabel!
+    @IBOutlet var currentPrice: UILabel!
+    @IBOutlet var dayDelta: UILabel!
     
     // MARK: - Public Properties
     
@@ -39,6 +44,7 @@ class DetailViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+        setupTitle()
         setupTableView()
         setupUI()
         
@@ -69,6 +75,22 @@ class DetailViewController: UIViewController {
     
     // MARK: - Private Methods
     
+    private func setupTitle() {
+        ticker.text = detailedStock.ticker
+        companyName.text = detailedStock.companyName
+        currentPrice.text = detailedStock.formattedPrice
+        dayDelta.text = detailedStock.formattedDayDelta
+        if let delta = detailedStock.delta {
+            if delta >= 0 {
+                dayDelta.textColor = K.Colors.Common.green
+            } else if delta < 0 {
+                dayDelta.textColor = K.Colors.Common.red
+            } else {
+                dayDelta.textColor = K.Colors.Text.ternary
+            }
+        }
+    }
+    
     private func setupTableView() {
         tableView.delegate = self
         tableView.dataSource = self
@@ -76,24 +98,33 @@ class DetailViewController: UIViewController {
         tableView.register(UINib(nibName: K.Cells.news, bundle: nil), forCellReuseIdentifier: K.Cells.news)
     }
     
-    private func setupUI() {    
-        title = detailedStock.ticker
+    private func setupUI() {
+        titleView.backgroundColor = K.Colors.Brand.secondary
+        ticker.textColor = K.Colors.Text.main
+        ticker.font = UIFont.systemFont(ofSize: 30, weight: .black)
+        companyName.textColor = K.Colors.Text.main
+        companyName.font = UIFont.systemFont(ofSize: 18, weight: .regular)
+        currentPrice.textColor = K.Colors.Text.main
+        currentPrice.font = UIFont.systemFont(ofSize: 24, weight: .bold)
+        dayDelta.font = UIFont.systemFont(ofSize: 20, weight: .regular)
         
         tableView.separatorStyle = .none
         tableView.estimatedRowHeight = 100
         tableView.rowHeight = UITableView.automaticDimension
         tableView.backgroundColor = K.Colors.Background.secondary
         
-        navigationController?.navigationBar.tintColor = K.Colors.Text.main
-        navigationController?.navigationBar.prefersLargeTitles = true
+        if let navigationBar = navigationController?.navigationBar {
+            navigationBar.tintColor = K.Colors.Text.main
+            navigationBar.barStyle = .black
+        }
         
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = K.Colors.Brand.main
-        appearance.largeTitleTextAttributes = [.foregroundColor: K.Colors.Text.main]
         appearance.shadowColor = .none
         navigationItem.standardAppearance = appearance
         navigationItem.scrollEdgeAppearance = appearance
+        navigationItem.largeTitleDisplayMode = .never
         
         let backBarButtton = UIBarButtonItem(title: "Back", style: .plain, target: nil, action: nil)
         navigationItem.backBarButtonItem = backBarButtton
@@ -141,7 +172,6 @@ class DetailViewController: UIViewController {
             setupFavouriteButton()
         }
     }
-    
 }
 
 //MARK: - UITableViewDataSource

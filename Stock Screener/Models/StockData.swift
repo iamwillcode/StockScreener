@@ -23,7 +23,8 @@ struct StockData: Codable {
     }
     
     struct ChartData: Codable {
-        let h: [Double]?
+        let c: [Double]?
+        let t: [Double]?
     }
     
     struct News: Codable {
