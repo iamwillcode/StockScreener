@@ -55,6 +55,10 @@ playground.xcworkspace
 # https://guides.cocoapods.org/using/using-cocoapods.html#should-i-check-the-pods-directory-into-source-control
 #
 # Pods/
+Pods/Realm/core/realm-monorepo.xcframework/watchos-arm64_i386_x86_64-simulator/
+Pods/Realm/core/realm-monorepo.xcframework/watchos-armv7k_arm64_32/
+Pods/Realm/core/realm-monorepo.xcframework/tvos-arm64/
+Pods/Realm/core/realm-monorepo.xcframework/tvos-arm64_x86_64-simulator/
 #
 # Add this line if you want to avoid checking in source code from the Xcode workspace
 # *.xcworkspace

@@ -8,32 +8,32 @@ struct StockNewsModel {
     let timestamp: Int
     let summary: String
     
+    // Convert news timestamp to readable format
     var age: String {
         let currentTimestamp = Int(Date().timeIntervalSince1970)
         let timestampInSeconds = timestamp / 1000
         let timeDifference = currentTimestamp - timestampInSeconds
         
         switch timeDifference {
-        case 0..<60:
+        case 0..<K.TimeInSeconds.minute:
             return "\(timeDifference)s"
-        case 0..<3600:
-            let minutes = timeDifference / 60
+        case 0..<K.TimeInSeconds.hour:
+            let minutes = timeDifference / K.TimeInSeconds.minute
             return "\(minutes)min"
-        case 0..<86400:
-            let hours = timeDifference / 3600
+        case 0..<K.TimeInSeconds.day:
+            let hours = timeDifference / K.TimeInSeconds.hour
             return "\(hours)h"
-        case 0..<2592000:
-            let days = timeDifference / 86400
+        case 0..<K.TimeInSeconds.month:
+            let days = timeDifference / K.TimeInSeconds.day
             return "\(days)d"
-        case 0..<31536000:
-            let months = timeDifference / 2592000
+        case 0..<K.TimeInSeconds.year:
+            let months = timeDifference / K.TimeInSeconds.month
             return "\(months)m"
-        case 31536000...:
-            let years = timeDifference / 31536000
+        case K.TimeInSeconds.year...:
+            let years = timeDifference / K.TimeInSeconds.year
             return "\(years)y"
         default:
             return "some time"
         }
     }
-    
 }

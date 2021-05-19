@@ -25,21 +25,7 @@ class DetailViewController: UIViewController {
     
     private var isFavourite = false
     
-    private var dataIsSetted: Bool = false {
-        didSet {
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-        }
-    }
-    
     // MARK: - Lifecycle
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        assert(detailedStock != nil, "Stock has no value")
-    }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -54,9 +40,7 @@ class DetailViewController: UIViewController {
         stockManager.getNews(for: detailedStock.ticker) { [weak self] (result) in
             guard let strongSelf = self else { return }
             strongSelf.stockNews = result
-            DispatchQueue.main.async {
-                strongSelf.tableView.reloadData()
-            }
+            strongSelf.reloadTableView()
         }
     }
     
@@ -67,10 +51,11 @@ class DetailViewController: UIViewController {
         return storyboard.instantiateViewController(withIdentifier: "DetailViewController") as? DetailViewController
     }
     
-    class func detailViewControllerForStock(_ stock: StockModel) -> UIViewController {
+    class func detailViewControllerForStock(_ stock: StockModel) -> UIViewController? {
         let detailViewController = loadFromStoryboard()
-        detailViewController!.detailedStock = stock
-        return detailViewController!
+        guard let detailVC = detailViewController else { return nil }
+        detailVC.detailedStock = stock
+        return detailVC
     }
     
     // MARK: - Private Methods
@@ -80,6 +65,7 @@ class DetailViewController: UIViewController {
         companyName.text = detailedStock.companyName
         currentPrice.text = detailedStock.formattedPrice
         dayDelta.text = detailedStock.formattedDayDelta
+        
         if let delta = detailedStock.delta {
             if delta >= 0 {
                 dayDelta.textColor = K.Colors.Common.green
@@ -94,25 +80,30 @@ class DetailViewController: UIViewController {
     private func setupTableView() {
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(UINib(nibName: K.Cells.chart, bundle: nil), forCellReuseIdentifier: K.Cells.chart)
+        tableView.register(StockChartCell.self, forCellReuseIdentifier: K.Cells.chart)
         tableView.register(UINib(nibName: K.Cells.news, bundle: nil), forCellReuseIdentifier: K.Cells.news)
     }
     
     private func setupUI() {
+        // Title View
         titleView.backgroundColor = K.Colors.Brand.secondary
+        
+        // Labels
         ticker.textColor = K.Colors.Text.main
-        ticker.font = UIFont.systemFont(ofSize: 30, weight: .black)
         companyName.textColor = K.Colors.Text.main
-        companyName.font = UIFont.systemFont(ofSize: 18, weight: .regular)
         currentPrice.textColor = K.Colors.Text.main
+        
+        ticker.font = UIFont.systemFont(ofSize: 30, weight: .black)
+        companyName.font = UIFont.systemFont(ofSize: 18, weight: .regular)
         currentPrice.font = UIFont.systemFont(ofSize: 24, weight: .bold)
         dayDelta.font = UIFont.systemFont(ofSize: 20, weight: .regular)
         
+        // Table View
         tableView.separatorStyle = .none
-        tableView.estimatedRowHeight = 100
-        tableView.rowHeight = UITableView.automaticDimension
         tableView.backgroundColor = K.Colors.Background.secondary
+        tableView.translatesAutoresizingMaskIntoConstraints = false
         
+        // Navigation Controller
         if let navigationBar = navigationController?.navigationBar {
             navigationBar.tintColor = K.Colors.Text.main
             navigationBar.barStyle = .black
@@ -138,6 +129,10 @@ class DetailViewController: UIViewController {
             let image = UIImage(systemName: "star.fill")!.withTintColor(K.Colors.Background.main, renderingMode: .alwaysOriginal)
             favouriteButton.setImage(image, for: .normal)
         }
+        
+        favouriteButton.contentVerticalAlignment = .fill
+        favouriteButton.contentHorizontalAlignment = .fill
+        favouriteButton.imageEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
     }
     
     private func showNewsWebsite(url: String) {
@@ -157,9 +152,16 @@ class DetailViewController: UIViewController {
         }
     }
     
+    // Reloads only Newsfeed section
+    private func reloadTableView() {
+        DispatchQueue.main.async {
+            self.tableView.reloadSections([1], with: .fade)
+        }
+    }
+    
     //MARK: - IBActions
     
-    @IBAction func setFavourite(_ sender: UIButton) {
+    @IBAction func toggleFavourite(_ sender: UIButton) {
         if isFavourite {
             isFavourite = false
             detailedStock.isFavourite = false
@@ -195,16 +197,7 @@ extension DetailViewController: UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(withIdentifier: K.Cells.chart, for: indexPath)
                 as! StockChartCell
             
-            if cell.stockChartView.data == nil {
-                cell.setData(for: detailedStock.ticker) { (result) in
-                    self.dataIsSetted = true
-                }
-                cell.stockChartView.isHidden = true
-                cell.activityIndicator.startAnimating()
-            } else {
-                cell.activityIndicator.stopAnimating()
-                cell.stockChartView.isHidden = false
-            }
+            cell.ticker = detailedStock.ticker
             
             return cell
         } else {
@@ -227,29 +220,12 @@ extension DetailViewController: UITableViewDataSource {
         }
     }
     
-    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-        guard view is UITableViewHeaderFooterView else { return }
-        (view as! UITableViewHeaderFooterView).contentView.backgroundColor = K.Colors.Brand.secondary
-        (view as! UITableViewHeaderFooterView).textLabel?.textColor = K.Colors.Text.main
-    }
-    
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if section == 0 {
-            return "Monthly price change"
-        }
-        if section == 1 {
-            return "Latest News"
-        }
-        return nil
-    }
-    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 1 {
             showNewsWebsite(url: stockNews[indexPath.row].url)
             tableView.deselectRow(at: indexPath, animated: true)
         }
     }
-    
 }
 
 //MARK: - UITableViewDelegate

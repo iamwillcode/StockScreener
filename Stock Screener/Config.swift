@@ -22,5 +22,4 @@ struct Config {
         static let news = "https://cloud.iexapis.com/stable/stock/"
         static let newsKey = "pk_8f50c7473cf041fdbe7f9bbafb968391"
     }
-
 }

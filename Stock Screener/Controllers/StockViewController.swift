@@ -24,6 +24,7 @@ class StockViewController: UIViewController {
     private var stockManager = StockManager()
     
     private var selectedSegment: StockSegments = .trending
+    private var trendingIsBuilded = false
     
     private var trendingStocks = [String: StockModel]()
     private var sourceStocks: [String: StockModel] {
@@ -33,8 +34,6 @@ class StockViewController: UIViewController {
             return StockFavourite.shared.getFavourite()
         }
     }
-    
-    private var trendingIsBuilded = false
     
     // MARK: - Lifecycle
     
@@ -59,14 +58,13 @@ class StockViewController: UIViewController {
         setupSkeleton() 
         
         stockManager.getTrends()
-        
-        setupFavouriteStocks()
+        getFavouriteStocks()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let destinationVC = segue.destination as? DetailViewController {
             if tableView.indexPathForSelectedRow != nil {
-                let stockList = [StockModel](sourceStocks.values).sorted{ $0.ticker < $1.ticker }
+                let stockList = [StockModel](sourceStocks.values).sorted { $0.ticker < $1.ticker }
                 destinationVC.detailedStock = stockList[tableView.indexPathForSelectedRow!.row]
             }
         }
@@ -76,7 +74,8 @@ class StockViewController: UIViewController {
     
     private func reloadTableView() {
         DispatchQueue.main.async {
-            if self.trendingIsBuilded, self.tableView.isSkeletonActive {
+            if self.trendingIsBuilded,
+               self.tableView.isSkeletonActive {
                 self.hideSkeleton()
             }
             self.tableView.reloadData()
@@ -106,22 +105,29 @@ class StockViewController: UIViewController {
     }
     
     private func setupUI() {
+        // View
         view.backgroundColor = K.Colors.Brand.main
         
+        // Table View
         tableView.separatorStyle = .none
         tableView.backgroundColor = K.Colors.Background.secondary
-        
-        segmentsView.backgroundColor = K.Colors.Brand.main
-        
         tableViewRefreshControl.tintColor = K.Colors.Brand.secondary
         
+        // Segments View
+        segmentsView.backgroundColor = K.Colors.Brand.main
+        
+        // Search Bar
         let searchBar = searchController.searchBar
         searchBar.isTranslucent = false
         
+        // Search Text Field
         let searchTextField = searchBar.searchTextField
         searchTextField.backgroundColor = K.Colors.Brand.main
         searchTextField.textColor = K.Colors.Text.main
-        searchTextField.attributedPlaceholder = NSAttributedString(string: "Ticker or company name", attributes: [NSAttributedString.Key.foregroundColor: K.Colors.Text.secondary])
+        searchTextField.attributedPlaceholder = NSAttributedString(
+            string: "Ticker or company name",
+            attributes: [NSAttributedString.Key.foregroundColor: K.Colors.Text.secondary]
+        )
         
         if let glassIconView = searchTextField.leftView as? UIImageView {
             glassIconView.image = glassIconView.image?.withRenderingMode(.alwaysTemplate)
@@ -134,6 +140,7 @@ class StockViewController: UIViewController {
             clearButton.tintColor = K.Colors.Text.main
         }
         
+        // Navigation Controller
         if let navigationBar = navigationController?.navigationBar {
             navigationBar.tintColor = K.Colors.Text.main
             navigationBar.prefersLargeTitles = true
@@ -156,8 +163,10 @@ class StockViewController: UIViewController {
     
     private func setupSegmentButtonUI(_ button: UIButton) {
         guard let title = button.titleLabel else { return }
+        
         button.contentHorizontalAlignment = UIControl.ContentHorizontalAlignment.left
         button.contentVerticalAlignment = UIControl.ContentVerticalAlignment.bottom
+        
         if title.text == selectedSegment.rawValue {
             title.font = UIFont.boldSystemFont(ofSize: 20)
             button.setTitleColor(K.Colors.Text.main, for: .normal)
@@ -180,10 +189,10 @@ class StockViewController: UIViewController {
     }
     
     private func hideSkeleton() {
-        tableView.hideSkeleton(transition: .crossDissolve(0.25))
+        tableView.hideSkeleton(transition: .none)
     }
     
-    private func setupFavouriteStocks() {
+    private func getFavouriteStocks() {
         StockFavourite.shared.loadFavouriteFromRealm()
     }
     
@@ -196,35 +205,33 @@ class StockViewController: UIViewController {
             
             if result,
                !stockItem.isFavourite {
-                strongSelf.trendingStocks[ticker]!.isFavourite = true
+                strongSelf.trendingStocks[ticker]!.isFavourite.toggle()
                 strongSelf.reloadTableView()
             } else if !result,
                       stockItem.isFavourite {
-                strongSelf.trendingStocks[ticker]!.isFavourite = false
+                strongSelf.trendingStocks[ticker]!.isFavourite.toggle()
                 strongSelf.reloadTableView()
             }
         }
     }
     
-    private func setStockAsFavourite(for stock: StockModel) {
+    private func toggleFavourite(for stock: StockModel) {
         let queue = K.Queues.trendingStocksAccess
         
         let ticker = stock.ticker
-        
         var selectedStock = stock
-        selectedStock.isFavourite = !selectedStock.isFavourite
+        
+        selectedStock.isFavourite.toggle()
         
         queue.sync {
             if self.trendingStocks[ticker] != nil {
-                self.trendingStocks[ticker]!.isFavourite = !self.trendingStocks[ticker]!.isFavourite
+                self.trendingStocks[ticker]!.isFavourite.toggle()
             }
         }
         
-        if selectedStock.isFavourite {
-            StockFavourite.shared.addToFavourite(stock: selectedStock)
-        } else {
-            StockFavourite.shared.removeFromFavourite(stock: selectedStock)
-        }
+        selectedStock.isFavourite
+            ? StockFavourite.shared.addToFavourite(stock: selectedStock)
+            : StockFavourite.shared.removeFromFavourite(stock: selectedStock)
         
         reloadTableView()
     }
@@ -253,7 +260,8 @@ class StockViewController: UIViewController {
             selectedSegment = .trending
             DispatchQueue.main.async {
                 self.setupSegmentButtons()
-                if self.trendingIsBuilded == false {
+                if !self.trendingIsBuilded,
+                   !self.tableView.isSkeletonActive {
                     self.setupSkeleton()
                 }
             }
@@ -288,16 +296,22 @@ extension StockViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: K.Cells.stock, for: indexPath)
             as! StockCell
         
-        guard sourceStocks.count > 0 else { return cell }
+        // Guard to prevent "Index out of range error" while changing stock segments
+        guard sourceStocks.count > indexPath.row else {
+            reloadTableView()
+            return cell
+        }
         
-        let stockList = [StockModel](sourceStocks.values).sorted{ $0.ticker < $1.ticker }
+        let stockList = [StockModel](sourceStocks.values).sorted { $0.ticker < $1.ticker }
         let stockItem = stockList[indexPath.row]
         
+        // Setup Cell's labels
         cell.ticker.text = stockItem.ticker
         cell.companyName.text = stockItem.companyName
         cell.currentPrice.text = stockItem.formattedPrice
         cell.dayDelta.text = stockItem.formattedDayDelta
         
+        // Setup delta text color depending on it's value
         if let delta = stockItem.delta {
             if delta >= 0 {
                 cell.dayDelta.textColor = K.Colors.Common.green
@@ -308,6 +322,7 @@ extension StockViewController: UITableViewDataSource {
             }
         }
         
+        // Setup activity indicator while price is loading
         switch stockItem.currentPrice {
         case nil:
             cell.activityIndicator.startAnimating()
@@ -315,16 +330,19 @@ extension StockViewController: UITableViewDataSource {
             cell.activityIndicator.stopAnimating()
         }
         
+        // Setup placeholder if there is no proper logo
         if let logo = stockItem.logo {
             cell.companyLogo.image = logo
         } else {
             cell.companyLogo.image = UIImage(named: K.defaultLogo)
         }
         
+        // Setup stock's Favourite property
         if selectedSegment == .trending {
             checkIfStockIsFavourite(stockItem)
         }
         
+        // Setup favourite button image
         if stockItem.isFavourite {
             let image = UIImage(systemName: "star.fill")!.withTintColor(K.Colors.Common.isFavourite, renderingMode: .alwaysOriginal)
             cell.favouriteButton.setImage(image, for: .normal)
@@ -333,8 +351,9 @@ extension StockViewController: UITableViewDataSource {
             cell.favouriteButton.setImage(image, for: .normal)
         }
         
+        // Setup favourite button action
         cell.callbackOnFavouriteButton = {
-            self.setStockAsFavourite(for: stockItem)
+            self.toggleFavourite(for: stockItem)
         }
         
         return cell
@@ -346,11 +365,11 @@ extension StockViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        // fixing SkeletonView bug when skeleton isn't hiding on the invisible cell
+        // Fix SkeletonView bug when skeleton isn't hiding on the invisible cell
         if cell.isSkeletonActive,
-           trendingIsBuilded == true,
+           trendingIsBuilded,
            !(tableView.indexPathsForVisibleRows?.contains(indexPath) ?? false) {
-            cell.hideSkeleton(transition: .crossDissolve(0.25))
+            cell.hideSkeleton(transition: .none)
         }
     }
 }
@@ -369,6 +388,7 @@ extension StockViewController: StockManagerDelegate {
         let ticker = stock.ticker
         var updatedStocks = [String: StockModel]()
         
+        // Check what source dictionary we should update
         if segment == .trending {
             queue.sync {
                 updatedStocks = self.trendingStocks
@@ -379,10 +399,13 @@ extension StockViewController: StockManagerDelegate {
         
         guard updatedStocks[ticker] != nil else { return }
         
-        if let currentPrice = stock.currentPrice, updatedStocks[ticker]!.currentPrice != currentPrice {
+        if let currentPrice = stock.currentPrice,
+           updatedStocks[ticker]!.currentPrice != currentPrice {
             updatedStocks[ticker]!.currentPrice = currentPrice
         }
-        if let previousPrice = stock.previousPrice, updatedStocks[ticker]!.previousPrice != previousPrice {
+        
+        if let previousPrice = stock.previousPrice,
+           updatedStocks[ticker]!.previousPrice != previousPrice {
             updatedStocks[ticker]!.previousPrice = previousPrice
         }
         
@@ -397,20 +420,23 @@ extension StockViewController: StockManagerDelegate {
         reloadTableView()
     }
     
-    func didBuildStockItem(_ stock: StockModel) {
+    func didBuildStockItem(_ stock: StockModel, workload: Int) {
         let queue = K.Queues.trendingStocksAccess
         let ticker = stock.ticker
+        var stocksCount = 0
         
         queue.sync {
             self.trendingStocks[ticker] = stock
+            stocksCount = self.trendingStocks.count
         }
         
         stockManager.getPrice(for: stock, segment: .trending)
-    }
-    
-    func didEndBuilding() {
-        trendingIsBuilded = true
-        reloadTableView()
+        
+        // Reload Table View data when all stocks were builded
+        if stocksCount == workload {
+            trendingIsBuilded = true
+            reloadTableView()
+        }
     }
     
     func didFailWithError(_ error: StockError) {
@@ -434,15 +460,22 @@ extension StockViewController: StockManagerDelegate {
 extension StockViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if let searchQuery = searchController.searchBar.text, searchQuery.isEmpty == false {
+        if let searchQuery = searchController.searchBar.text,
+           !searchQuery.isEmpty {
             if let resultsController = searchController.searchResultsController as? ResultsTableController {
+                // Validate a search query with regular expression
                 let formattedQuery = searchQuery.replacingOccurrences(of: "[^A-Za-z0-9.,/-()*@!+]+", with: "", options: .regularExpression)
                 resultsController.searchQuery = formattedQuery
+                
+                // Clear result of the previous search
                 resultsController.clearResults()
+                
+                // Setup a small delay to perform search only when user has ended typing
                 NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(self.performStockSearch), object: searchBar)
                 perform(#selector(self.performStockSearch), with: searchBar, afterDelay: 0.75)
             }
         } else {
+            // Cancel previous search if user clears the search query
             if let resultsController = searchController.searchResultsController as? ResultsTableController {
                 NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(self.performStockSearch), object: searchBar)
                 resultsController.clearResults()
@@ -453,9 +486,12 @@ extension StockViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         if let searchQuery = searchController.searchBar.text, searchQuery.isEmpty == false {
             if let resultsController = searchController.searchResultsController as? ResultsTableController {
+                
                 let formattedQuery = searchQuery.replacingOccurrences(of: "[^A-Za-z0-9.,/-()*@!+]+", with: "", options: .regularExpression)
                 resultsController.searchQuery = formattedQuery
+                
                 resultsController.clearResults()
+                
                 NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(self.performStockSearch), object: searchBar)
                 performStockSearch()
             }
@@ -488,9 +524,8 @@ extension StockViewController: UISearchControllerDelegate {
 extension StockViewController: ResultsTableControllerDelegate {
     
     func didSelectStock(stock: StockModel) {
-        let detailVC = DetailViewController.detailViewControllerForStock(stock)
+        guard let detailVC = DetailViewController.detailViewControllerForStock(stock) else { return }
         navigationController?.pushViewController(detailVC, animated: false)
-        
     }
 }
 

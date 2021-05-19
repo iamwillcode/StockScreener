@@ -1,5 +1,6 @@
 import Foundation
 
+/// Use to serialize JSON
 struct StockData: Codable {
     
     struct Ticker: Codable {
@@ -34,7 +35,6 @@ struct StockData: Codable {
         let url: String
         let summary: String
     }
-    
 }
 
 

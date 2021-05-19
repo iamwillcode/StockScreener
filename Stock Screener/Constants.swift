@@ -25,6 +25,7 @@ struct K {
             static let main = UIColor(named: "MainFontColor")!
             static let secondary = UIColor(named: "SecondaryFontColor")!
             static let ternary = UIColor(named: "TernaryFontColor")!
+            static let quaternary = UIColor(named: "QuaternaryFontColor")
         }
         
         struct Common {
@@ -43,4 +44,12 @@ struct K {
         static let chartDataAccess = DispatchQueue(label: "chart-data")
     }
     
+    struct TimeInSeconds {
+        static let minute = 60
+        static let hour = 3_600
+        static let day = 86_400
+        static let week = 604_800
+        static let month = 2_592_000
+        static let year = 31_536_000
+    }
 }

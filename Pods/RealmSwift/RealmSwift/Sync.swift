@@ -268,7 +268,8 @@ import Combine
 /// This handler is executed on a non-main global `DispatchQueue`.
 @dynamicMemberLookup
 @frozen public struct Functions {
-    weak var user: User?
+
+    private let user: User
 
     fileprivate init(user: User) {
         self.user = user
@@ -284,7 +285,7 @@ import Combine
     public subscript(dynamicMember string: String) -> Function {
         return { (arguments: [AnyBSON], completionHandler: @escaping FunctionCompletionHandler) in
             let objcArgs = arguments.map(ObjectiveCSupport.convert) as! [RLMBSON]
-            self.user?.__callFunctionNamed(string, arguments: objcArgs) { (bson: RLMBSON?, error: Error?) in
+            self.user.__callFunctionNamed(string, arguments: objcArgs) { (bson: RLMBSON?, error: Error?) in
                 completionHandler(ObjectiveCSupport.convert(object: bson), error)
             }
         }
@@ -300,7 +301,7 @@ import Combine
     public subscript(dynamicMember string: String) -> ResultFunction {
         return { (arguments: [AnyBSON], completionHandler: @escaping ResultFunctionCompletionHandler) in
             let objcArgs = arguments.map(ObjectiveCSupport.convert) as! [RLMBSON]
-            self.user?.__callFunctionNamed(string, arguments: objcArgs) { (bson: RLMBSON?, error: Error?) in
+            self.user.__callFunctionNamed(string, arguments: objcArgs) { (bson: RLMBSON?, error: Error?) in
                 if let bson = ObjectiveCSupport.convert(object: bson) {
                     completionHandler(.success(bson))
                 } else {
@@ -630,6 +631,68 @@ public extension User {
                 }
             }
         }
+    }
+}
+
+/// :nodoc:
+@available(OSX 10.15, watchOS 6.0, iOS 13.0, iOSApplicationExtension 13.0, OSXApplicationExtension 10.15, tvOS 13.0, macCatalyst 13.0, macCatalystApplicationExtension 13.0, *)
+@frozen public struct UserSubscription: Subscription {
+    private let user: User
+    private let token: RLMUserSubscriptionToken
+
+    internal init(user: User, token: RLMUserSubscriptionToken) {
+        self.user = user
+        self.token = token
+    }
+
+    /// A unique identifier for identifying publisher streams.
+    public var combineIdentifier: CombineIdentifier {
+        return CombineIdentifier(NSNumber(value: token.value))
+    }
+
+    /// This function is not implemented.
+    ///
+    /// Realm publishers do not support backpressure and so this function does nothing.
+    public func request(_ demand: Subscribers.Demand) {
+    }
+
+    /// Stop emitting values on this subscription.
+    public func cancel() {
+        user.unsubscribe(token)
+    }
+}
+
+/// :nodoc:
+@available(OSX 10.15, watchOS 6.0, iOS 13.0, iOSApplicationExtension 13.0, OSXApplicationExtension 10.15, tvOS 13.0, macCatalyst 13.0, macCatalystApplicationExtension 13.0, *)
+public class UserPublisher: Publisher {
+    /// This publisher cannot fail.
+    public typealias Failure = Never
+    /// This publisher emits User.
+    public typealias Output = User
+
+    private let user: User
+
+    internal init(_ user: User) {
+        self.user = user
+    }
+
+    /// :nodoc:
+    public func receive<S>(subscriber: S) where S: Subscriber, S.Failure == Never, Output == S.Input {
+        let token = user.subscribe { _ in
+            _ = subscriber.receive(self.user)
+        }
+
+        subscriber.receive(subscription: UserSubscription(user: user, token: token))
+    }
+}
+
+@available(OSX 10.15, watchOS 6.0, iOS 13.0, iOSApplicationExtension 13.0, OSXApplicationExtension 10.15, tvOS 13.0, macCatalyst 13.0, macCatalystApplicationExtension 13.0, *)
+extension User: ObservableObject {
+    /// A publisher that emits Void each time the user changes.
+    ///
+    /// Despite the name, this actually emits *after* the user has changed.
+    public var objectWillChange: UserPublisher {
+        return UserPublisher(self)
     }
 }
 #endif

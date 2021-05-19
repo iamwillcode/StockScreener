@@ -39,23 +39,29 @@ final class StockCell: UITableViewCell {
     // MARK: - Private Methods
     
     private func setupUI() {
+        // Self
         self.translatesAutoresizingMaskIntoConstraints = false
         self.backgroundColor = K.Colors.Background.secondary
         
+        // Cell View
         cellView.layer.cornerRadius = 12
         cellView.layer.masksToBounds = true
         cellView.backgroundColor = K.Colors.Background.main
         
+        // Labels
         ticker.textColor = K.Colors.Text.ternary
         companyName.textColor = K.Colors.Text.ternary
         currentPrice.textColor = K.Colors.Text.ternary
         dayDelta.textColor = K.Colors.Text.ternary
         
+        // Image View
         companyLogo.layer.cornerRadius = 12
         companyLogo.layer.masksToBounds = true
         
+        // Activity indicator
         activityIndicator.hidesWhenStopped = true
         
+        // Selection style of the cell
         selectedBackgroundView = {
             let view = UIView.init()
             view.backgroundColor = K.Colors.Text.secondary
@@ -86,14 +92,13 @@ final class StockCell: UITableViewCell {
         ticker.linesCornerRadius = 5
         companyName.linesCornerRadius = 5
         
-        ticker.skeletonPaddingInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: cellTopInfoView.frame.size.width)
-        companyName.skeletonPaddingInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: cellBottomInfoView.frame.size.width / 2)
+        ticker.skeletonPaddingInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: cellInfoView.frame.width)
+        companyName.skeletonPaddingInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: cellInfoView.frame.width / 2)
     }
     
     // MARK: - IBActions
     
     @IBAction func setFavourite(_ sender: UIButton) {
-        self.callbackOnFavouriteButton?()
+        callbackOnFavouriteButton?()
     }
-    
 }

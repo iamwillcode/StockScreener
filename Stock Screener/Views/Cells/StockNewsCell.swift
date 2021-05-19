@@ -1,7 +1,7 @@
 import UIKit
 
 class StockNewsCell: UITableViewCell {
-
+    
     //MARK: - IBOutlets
     
     @IBOutlet var source: UILabel!
@@ -16,7 +16,7 @@ class StockNewsCell: UITableViewCell {
         
         setupUI()
     }
-
+    
     //MARK: - Private methods
     
     private func setupUI() {
