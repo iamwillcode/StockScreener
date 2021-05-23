@@ -226,7 +226,7 @@ class ResultsTableController: UITableViewController {
     private func checkIfStockIsFavourite(_ stock: StockModel) {
         StockFavourite.shared.checkIfTickerIsFavourite(stock: stock) { [weak self] (result) in
             guard let strongSelf = self else { return }
-
+            
             if stock.isFavourite != result {
                 var updatedStock = stock
                 

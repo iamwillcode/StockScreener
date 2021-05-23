@@ -8,18 +8,19 @@ final class ChartView: LineChartView {
         super.init(frame: frame)
         addTapRecognizer()
     }
+    
 
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         addTapRecognizer()
     }
-
+    
     func addTapRecognizer() {
         let tapRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(chartTapped))
         tapRecognizer.minimumPressDuration = 0.01
         self.addGestureRecognizer(tapRecognizer)
     }
-
+    
     @objc func chartTapped(_ sender: UITapGestureRecognizer) {
         if sender.state == .began || sender.state == .changed {
             let position = sender.location(in: self)

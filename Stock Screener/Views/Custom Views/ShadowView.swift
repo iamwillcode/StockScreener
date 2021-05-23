@@ -8,7 +8,7 @@ final class ShadowView: UIView {
             setupShadow()
         }
     }
-
+    
     private func setupShadow() {
         self.layer.cornerRadius = 12
         self.layer.shadowColor = UIColor.gray.cgColor

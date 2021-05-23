@@ -432,7 +432,12 @@ extension StockViewController: StockManagerDelegate {
             
             if stock!.currentPrice == nil {
                 stock!.currentPrice = 0
-                updateTrendingStocks(stock: stock!)
+                
+                if selectedSegment == .trending {
+                    updateTrendingStocks(stock: stock!)
+                } else if selectedSegment == .favourite {
+                    StockFavourite.shared.updateFavourite(stock: stock!)
+                }
             }
             reloadTableView()
         default:
