@@ -6,6 +6,7 @@ target 'Stock Screener' do
   use_frameworks!
 
   # Pods for Stock Screener
+  pod 'SwiftLint'
   pod 'Charts', '=3.6.0'
   pod 'SkeletonView', '=1.15.0'
   pod 'RealmSwift', '=10.7.5'

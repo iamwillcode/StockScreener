@@ -10,15 +10,15 @@ struct StockModel {
     var previousPrice: Double?
     
     var delta: Double? {
-        guard let c = currentPrice,
-              let pc = previousPrice else { return nil }
-        return c - pc
+        guard let cPrice = currentPrice,
+              let pPrice = previousPrice else { return nil }
+        return cPrice - pPrice
     }
     
     var percentDelta: Double? {
-        guard let c = currentPrice,
-              let pc = previousPrice else { return nil }
-        return (c - pc) / pc
+        guard let cPrice = currentPrice,
+              let pPrice = previousPrice else { return nil }
+        return (cPrice - pPrice) / pPrice
     }
     
     private let formatter = StockFormatter()
@@ -31,6 +31,11 @@ struct StockModel {
     var formattedDayDelta: String? {
         let formattedDelta = formatter.formattedDelta(delta)
         let formattedPercentDelta = formatter.formattedPercentDelta(percentDelta)
-        return formattedDelta + formattedPercentDelta
+        
+        guard formattedPercentDelta.count > 0 else { return formattedDelta }
+        
+        let dayDelta = "\(formattedDelta) (\(formattedPercentDelta))"
+        
+        return dayDelta
     }
 }

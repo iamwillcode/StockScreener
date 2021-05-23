@@ -68,11 +68,11 @@ class DetailViewController: UIViewController {
         
         if let delta = detailedStock.delta {
             if delta >= 0 {
-                dayDelta.textColor = K.Colors.Common.green
+                dayDelta.textColor = Constants.Colors.Common.green
             } else if delta < 0 {
-                dayDelta.textColor = K.Colors.Common.red
+                dayDelta.textColor = Constants.Colors.Common.red
             } else {
-                dayDelta.textColor = K.Colors.Text.ternary
+                dayDelta.textColor = Constants.Colors.Text.ternary
             }
         }
     }
@@ -80,18 +80,21 @@ class DetailViewController: UIViewController {
     private func setupTableView() {
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(StockChartCell.self, forCellReuseIdentifier: K.Cells.chart)
-        tableView.register(UINib(nibName: K.Cells.news, bundle: nil), forCellReuseIdentifier: K.Cells.news)
+        tableView.register(StockChartCell.self, forCellReuseIdentifier: Constants.Cells.chart)
+        tableView.register(
+            UINib(nibName: Constants.Cells.news, bundle: nil),
+            forCellReuseIdentifier: Constants.Cells.news
+        )
     }
     
     private func setupUI() {
         // Title View
-        titleView.backgroundColor = K.Colors.Brand.secondary
+        titleView.backgroundColor = Constants.Colors.Brand.secondary
         
         // Labels
-        ticker.textColor = K.Colors.Text.main
-        companyName.textColor = K.Colors.Text.main
-        currentPrice.textColor = K.Colors.Text.main
+        ticker.textColor = Constants.Colors.Text.main
+        companyName.textColor = Constants.Colors.Text.main
+        currentPrice.textColor = Constants.Colors.Text.main
         
         ticker.font = UIFont.systemFont(ofSize: 30, weight: .black)
         companyName.font = UIFont.systemFont(ofSize: 18, weight: .regular)
@@ -100,18 +103,18 @@ class DetailViewController: UIViewController {
         
         // Table View
         tableView.separatorStyle = .none
-        tableView.backgroundColor = K.Colors.Background.secondary
+        tableView.backgroundColor = Constants.Colors.Background.secondary
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         // Navigation Controller
         if let navigationBar = navigationController?.navigationBar {
-            navigationBar.tintColor = K.Colors.Text.main
+            navigationBar.tintColor = Constants.Colors.Text.main
             navigationBar.barStyle = .black
         }
         
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = K.Colors.Brand.main
+        appearance.backgroundColor = Constants.Colors.Brand.main
         appearance.shadowColor = .none
         navigationItem.standardAppearance = appearance
         navigationItem.scrollEdgeAppearance = appearance
@@ -123,10 +126,12 @@ class DetailViewController: UIViewController {
     
     private func setupFavouriteButton() {
         if isFavourite {
-            let image = UIImage(systemName: "star.fill")!.withTintColor(K.Colors.Common.isFavourite, renderingMode: .alwaysOriginal)
+            let image = UIImage(systemName: "star.fill")!
+                .withTintColor(Constants.Colors.Common.isFavourite, renderingMode: .alwaysOriginal)
             favouriteButton.setImage(image, for: .normal)
         } else {
-            let image = UIImage(systemName: "star.fill")!.withTintColor(K.Colors.Background.main, renderingMode: .alwaysOriginal)
+            let image = UIImage(systemName: "star.fill")!
+                .withTintColor(Constants.Colors.Background.main, renderingMode: .alwaysOriginal)
             favouriteButton.setImage(image, for: .normal)
         }
         
@@ -140,7 +145,7 @@ class DetailViewController: UIViewController {
             let config = SFSafariViewController.Configuration()
             config.entersReaderIfAvailable = true
             
-            let vc = SFSafariViewController(url: url, configuration: config)
+            let vc = SFSafariViewController(url: url, configuration: config) // swiftlint:disable:this identifier_name
             present(vc, animated: true)
         }
     }
@@ -159,7 +164,7 @@ class DetailViewController: UIViewController {
         }
     }
     
-    //MARK: - IBActions
+    // MARK: - IBActions
     
     @IBAction func toggleFavourite(_ sender: UIButton) {
         if isFavourite {
@@ -176,7 +181,7 @@ class DetailViewController: UIViewController {
     }
 }
 
-//MARK: - UITableViewDataSource
+// MARK: - UITableViewDataSource
 
 extension DetailViewController: UITableViewDataSource {
     
@@ -194,15 +199,15 @@ extension DetailViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: K.Cells.chart, for: indexPath)
-                as! StockChartCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.chart, for: indexPath)
+                as! StockChartCell // swiftlint:disable:this force_cast
             
             cell.ticker = detailedStock.ticker
             
             return cell
         } else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: K.Cells.news, for: indexPath)
-                as! StockNewsCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cells.news, for: indexPath)
+                as! StockNewsCell // swiftlint:disable:this force_cast
             
             let stockNewsItem = stockNews[indexPath.row]
             
@@ -228,6 +233,6 @@ extension DetailViewController: UITableViewDataSource {
     }
 }
 
-//MARK: - UITableViewDelegate
+// MARK: - UITableViewDelegate
 
 extension DetailViewController: UITableViewDelegate {}

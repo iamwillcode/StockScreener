@@ -3,7 +3,7 @@ import Charts
 
 final class StockChartCell: UITableViewCell {
     
-    //MARK: - Public properties
+    // MARK: - Public properties
     
     // Set data for the chart when ticker value was setted
     var ticker: String? {
@@ -27,7 +27,7 @@ final class StockChartCell: UITableViewCell {
         chartView.setScaleEnabled(false)
         chartView.noDataText = "There is no data for the chosen period"
         chartView.noDataFont = UIFont.systemFont(ofSize: 20, weight: .semibold)
-        chartView.noDataTextColor = K.Colors.Text.ternary
+        chartView.noDataTextColor = Constants.Colors.Text.ternary
         return chartView
     }()
     
@@ -72,7 +72,7 @@ final class StockChartCell: UITableViewCell {
         return segmentedControl
     }()
     
-    //MARK: - Private properties
+    // MARK: - Private properties
     
     private let stockManager = StockManager()
     private let formatter = StockFormatter()
@@ -105,7 +105,7 @@ final class StockChartCell: UITableViewCell {
         setupChartLoading()
     }
     
-    //MARK: - Public Methods
+    // MARK: - Public Methods
     
     func setData(period: String, completion: @escaping (Bool) -> Void) {
         guard let ticker = ticker else { return }
@@ -114,10 +114,11 @@ final class StockChartCell: UITableViewCell {
         
         var entries = [ChartDataEntry]()
         
-        stockManager.getChartData(for: ticker, period: period) {
-            (prices, timestamps) in
+        stockManager.getChartData(for: ticker, period: period) { (prices, timestamps) in
+            // swiftlint:disable:next identifier_name
             guard let ps = prices,
                   let ts = timestamps else {
+                // swiftlint:disable:previous identifier_name
                 self.stockChartView.data = nil
                 completion(true)
                 return
@@ -138,9 +139,9 @@ final class StockChartCell: UITableViewCell {
             var chartColor: UIColor {
                 let lastPrice = entries[entries.count - 1].y
                 if lastPrice >= median {
-                    return K.Colors.Common.green
+                    return Constants.Colors.Common.green
                 } else {
-                    return K.Colors.Common.red
+                    return Constants.Colors.Common.red
                 }
             }
             
@@ -150,16 +151,15 @@ final class StockChartCell: UITableViewCell {
             chartDataSet.mode = .cubicBezier
             chartDataSet.lineWidth = 3
             chartDataSet.setColor(chartColor)
-            let gradientColors = [K.Colors.Background.secondary.cgColor, chartColor.cgColor]
+            let gradientColors = [Constants.Colors.Background.secondary.cgColor, chartColor.cgColor]
             let gradient = CGGradient(colorsSpace: nil, colors: gradientColors as CFArray, locations: nil)!
             chartDataSet.fill = Fill(linearGradient: gradient, angle: 90)
             chartDataSet.fillAlpha = 0.5
             chartDataSet.drawFilledEnabled = true
             chartDataSet.drawHorizontalHighlightIndicatorEnabled = false
-            chartDataSet.highlightEnabled = true
-            chartDataSet.highlightColor = K.Colors.Brand.secondary
+            chartDataSet.highlightColor = Constants.Colors.Brand.secondary
             chartDataSet.highlightLineWidth = 2
-            chartDataSet.valueTextColor = K.Colors.Text.ternary
+            chartDataSet.valueTextColor = Constants.Colors.Text.ternary
             
             // Setup Chart Data
             let data = LineChartData(dataSet: chartDataSet)
@@ -180,7 +180,7 @@ final class StockChartCell: UITableViewCell {
         }
     }
     
-    //MARK: - Private methods
+    // MARK: - Private methods
     
     private func setupCell() {
         contentView.isUserInteractionEnabled = true
@@ -198,19 +198,19 @@ final class StockChartCell: UITableViewCell {
     
     private func setupUI() {
         // Self
-        self.backgroundColor = K.Colors.Background.secondary
+        self.backgroundColor = Constants.Colors.Background.secondary
         
         // Labels
-        priceLabel.textColor = K.Colors.Text.ternary
-        dateLabel.textColor = K.Colors.Text.quaternary
+        priceLabel.textColor = Constants.Colors.Text.ternary
+        dateLabel.textColor = Constants.Colors.Text.quaternary
         priceLabel.font = UIFont.systemFont(ofSize: 20, weight: .bold)
         dateLabel.font = UIFont.systemFont(ofSize: 18, weight: .light)
         
         // Period Segmented Control
-        periodSegmentedControl.backgroundColor = K.Colors.Background.secondary
-        periodSegmentedControl.selectedSegmentTintColor = K.Colors.Brand.secondary
-        periodSegmentedControl.setTitleTextAttributes([.foregroundColor: K.Colors.Text.ternary], for: .normal)
-        periodSegmentedControl.setTitleTextAttributes([.foregroundColor: K.Colors.Text.main], for: .selected)
+        periodSegmentedControl.backgroundColor = Constants.Colors.Background.secondary
+        periodSegmentedControl.selectedSegmentTintColor = Constants.Colors.Brand.secondary
+        periodSegmentedControl.setTitleTextAttributes([.foregroundColor: Constants.Colors.Text.ternary], for: .normal)
+        periodSegmentedControl.setTitleTextAttributes([.foregroundColor: Constants.Colors.Text.main], for: .selected)
         periodSegmentedControl.isHidden = true
         
         // Selection style of the cell
@@ -230,7 +230,7 @@ final class StockChartCell: UITableViewCell {
         stockChartView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
         stockChartView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
         stockChartView.topAnchor.constraint(equalTo: chartInfoView.bottomAnchor).isActive = true
-        stockChartView.bottomAnchor.constraint(equalTo: periodSegmentedControl.topAnchor, constant: -5.0).isActive = true
+        stockChartView.bottomAnchor.constraint(equalTo: periodSegmentedControl.topAnchor, constant: -5).isActive = true
         
         // Chart Info View
         chartInfoView.translatesAutoresizingMaskIntoConstraints = false
@@ -242,17 +242,17 @@ final class StockChartCell: UITableViewCell {
         
         // Info Stack View
         infoStackView.translatesAutoresizingMaskIntoConstraints = false
-        infoStackView.trailingAnchor.constraint(equalTo: chartInfoView.trailingAnchor, constant: -20.0).isActive = true
-        infoStackView.leadingAnchor.constraint(equalTo: chartInfoView.leadingAnchor, constant: 20.0).isActive = true
-        infoStackView.topAnchor.constraint(equalTo: chartInfoView.topAnchor, constant: 5.0).isActive = true
-        infoStackView.bottomAnchor.constraint(equalTo: chartInfoView.bottomAnchor, constant: -5.0).isActive = true
+        infoStackView.trailingAnchor.constraint(equalTo: chartInfoView.trailingAnchor, constant: -20).isActive = true
+        infoStackView.leadingAnchor.constraint(equalTo: chartInfoView.leadingAnchor, constant: 20).isActive = true
+        infoStackView.topAnchor.constraint(equalTo: chartInfoView.topAnchor, constant: 5).isActive = true
+        infoStackView.bottomAnchor.constraint(equalTo: chartInfoView.bottomAnchor, constant: -5).isActive = true
         
         // Period Segmented Control
         periodSegmentedControl.translatesAutoresizingMaskIntoConstraints = false
         periodSegmentedControl.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
-        periodSegmentedControl.widthAnchor.constraint(greaterThanOrEqualTo: self.widthAnchor, multiplier: 0.7).isActive = true
-        periodSegmentedControl.topAnchor.constraint(equalTo: stockChartView.bottomAnchor, constant: 5.0).isActive = true
-        periodSegmentedControl.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -20.0).isActive = true
+        periodSegmentedControl.widthAnchor.constraint(greaterThanOrEqualTo: self.widthAnchor, multiplier: 0.7).isActive = true // swiftlint:disable:this line_length
+        periodSegmentedControl.topAnchor.constraint(equalTo: stockChartView.bottomAnchor, constant: 5).isActive = true
+        periodSegmentedControl.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -20).isActive = true
         
         // Activity Indicator
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
@@ -274,7 +274,7 @@ final class StockChartCell: UITableViewCell {
     }
 }
 
-//MARK: - Chart View Delegate
+// MARK: - Chart View Delegate
 
 extension StockChartCell: ChartViewDelegate {
     /// Displays price and date of selected value on the Chart View

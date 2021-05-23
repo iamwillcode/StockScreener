@@ -9,7 +9,7 @@ struct StockData: Codable {
     }
     
     struct Price: Codable {
-        let c, pc: Double?
+        let c, pc: Double? // swiftlint:disable:this identifier_name
     }
     
     struct Search: Codable {
@@ -24,8 +24,8 @@ struct StockData: Codable {
     }
     
     struct ChartData: Codable {
-        let c: [Double]?
-        let t: [Double]?
+        let c: [Double]? // swiftlint:disable:this identifier_name
+        let t: [Double]? // swiftlint:disable:this identifier_name
     }
     
     struct News: Codable {
@@ -36,10 +36,3 @@ struct StockData: Codable {
         let summary: String
     }
 }
-
-
-
-
-
-
-

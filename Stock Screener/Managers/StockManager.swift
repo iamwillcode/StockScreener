@@ -1,6 +1,6 @@
 import UIKit
 
-protocol StockManagerDelegate {
+protocol StockManagerDelegate: AnyObject {
     func didUpdateStockItem(_ stock: StockModel, segment: StockSegments?)
     func didBuildStockItem(_ stock: StockModel, workload: Int)
     func didFailWithError(_ error: StockError)
@@ -8,7 +8,7 @@ protocol StockManagerDelegate {
 
 struct StockManager {
     
-    var delegate: StockManagerDelegate?
+    weak var delegate: StockManagerDelegate?
     
     private let stockNetwork = StockNetwork()
     private let logoProvider = StockLogoProvider()
@@ -25,7 +25,7 @@ struct StockManager {
                 switch result {
                 case .failure(let error):
                     self.delegate?.didFailWithError(error)
-                case .success (let stockData):
+                case .success(let stockData):
                     guard stockData.count > 0 else {
                         let error = StockError.trendsError
                         self.delegate?.didFailWithError(error)
@@ -52,7 +52,7 @@ struct StockManager {
                 switch result {
                 case .failure(let error):
                     self.delegate?.didFailWithError(error)
-                case .success (let stockData):
+                case .success(let stockData):
                     if let searchResult: [StockData.Search.Result] = stockData.result {
                         // Set filter to show result only for common stocks, not crypto and etc.
                         var filteredResult = searchResult.filter { $0.type == "Common Stock" }
@@ -91,7 +91,7 @@ struct StockManager {
                 switch result {
                 case .failure(let error):
                     self.delegate?.didFailWithError(error)
-                case .success (let stockData):
+                case .success(let stockData):
                     if let currentPrice = stockData.c,
                        let previousPrice = stockData.pc {
                         var updatedStock = stock
@@ -127,22 +127,23 @@ struct StockManager {
         var calculatedTimestamp: Int {
             switch period {
             case "D":
-                return currentTimestamp - K.TimeInSeconds.day
+                return currentTimestamp - Constants.TimeInSeconds.day
             case "W":
-                return currentTimestamp - K.TimeInSeconds.week
+                return currentTimestamp - Constants.TimeInSeconds.week
             case "M":
-                return currentTimestamp - K.TimeInSeconds.month
+                return currentTimestamp - Constants.TimeInSeconds.month
             case "3M":
-                return currentTimestamp - K.TimeInSeconds.month * 3
+                return currentTimestamp - Constants.TimeInSeconds.month * 3
             case "6M":
-                return currentTimestamp - K.TimeInSeconds.month * 6
+                return currentTimestamp - Constants.TimeInSeconds.month * 6
             case "Y":
-                return currentTimestamp - K.TimeInSeconds.year
+                return currentTimestamp - Constants.TimeInSeconds.year
             default:
                 return currentTimestamp
             }
         }
         
+        // swiftlint:disable:next line_length
         let URL = "\(Config.Api.main)stock/candle?symbol=\(ticker)&resolution=\(resolution)&from=\(calculatedTimestamp)&to=\(currentTimestamp)&token=\(Config.Api.mainKey)"
         
         DispatchQueue.global(qos: .utility).async {
@@ -151,9 +152,9 @@ struct StockManager {
             
             DispatchQueue.main.async {
                 switch result {
-                case .failure (let error):
+                case .failure(let error):
                     self.delegate?.didFailWithError(error)
-                case .success (let stockData):
+                case .success(let stockData):
                     if let price = stockData.c, let timestamp = stockData.t {
                         completion(price, timestamp)
                     } else {
@@ -174,9 +175,9 @@ struct StockManager {
             
             DispatchQueue.main.async {
                 switch result {
-                case .failure (let error):
+                case .failure(let error):
                     self.delegate?.didFailWithError(error)
-                case .success (let stockData):
+                case .success(let stockData):
                     var stockNews = [StockNewsModel]()
                     for searchItem in stockData {
                         let stockNewsItem = StockNewsModel(
@@ -216,7 +217,7 @@ struct StockManager {
     ///   - companyName: full name of stock
     ///   - workload: total amount of objects to build
     func buildStockItem(for ticker: String, _ companyName: String, workload: Int) {
-        let queue = K.Queues.stockManagerTask
+        let queue = Constants.Queues.stockManagerTask
         let group = DispatchGroup()
         
         var logo: UIImage?

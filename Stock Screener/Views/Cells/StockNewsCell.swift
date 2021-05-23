@@ -2,14 +2,14 @@ import UIKit
 
 class StockNewsCell: UITableViewCell {
     
-    //MARK: - IBOutlets
+    // MARK: - IBOutlets
     
     @IBOutlet var source: UILabel!
     @IBOutlet var headline: UILabel!
     @IBOutlet var summary: UILabel!
     @IBOutlet var age: UILabel!
     
-    //MARK: - Lifecycle
+    // MARK: - Lifecycle
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -17,14 +17,14 @@ class StockNewsCell: UITableViewCell {
         setupUI()
     }
     
-    //MARK: - Private methods
+    // MARK: - Private methods
     
     private func setupUI() {
-        self.backgroundColor = K.Colors.Background.secondary
+        self.backgroundColor = Constants.Colors.Background.secondary
         
         selectedBackgroundView = {
             let view = UIView.init()
-            view.backgroundColor = K.Colors.Text.secondary
+            view.backgroundColor = Constants.Colors.Text.secondary
             return view
         }()
     }

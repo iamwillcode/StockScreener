@@ -8,7 +8,7 @@ struct StockFormatter {
         formatter.maximumFractionDigits = 2
         formatter.minimumFractionDigits = 2
         
-        guard let p = price else { return "" }
+        guard let p = price else { return "" } // swiftlint:disable:this identifier_name
         
         let formattedPrice = formatter.string(from: NSNumber(value: p)) ?? ""
         return formattedPrice
@@ -21,6 +21,7 @@ struct StockFormatter {
         formatter.maximumFractionDigits = 2
         formatter.minimumFractionDigits = 2
         
+        // swiftlint:disable:next identifier_name
         guard let d = delta,
               d != 0 else { return "" }
         
@@ -31,15 +32,16 @@ struct StockFormatter {
     func formattedPercentDelta(_ percentDelta: Double?) -> String {
         var formattedPercentDelta = ""
         
+        // swiftlint:disable:next identifier_name
         guard let d = percentDelta,
               d != 0 else { return "" }
         
         if d >= 0 {
-            formattedPercentDelta = String(format:"%.2f%%", d * 100)
+            formattedPercentDelta = String(format: "%.2f%%", d * 100)
         } else {
-            formattedPercentDelta = String(format:"%.2f%%", d * -100)
+            formattedPercentDelta = String(format: "%.2f%%", d * -100)
         }
-        return " (\(formattedPercentDelta))"
+        return formattedPercentDelta
     }
     
     func formattedDateFromUnixTimestamp(_ timestamp: Double) -> String {

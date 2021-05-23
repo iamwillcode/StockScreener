@@ -11,10 +11,12 @@ class StockLogoProvider {
             completion(cachedImage)
         } else {
             DispatchQueue.global(qos: .utility).async {
-                let request = URLRequest(url: url, cachePolicy: URLRequest.CachePolicy.returnCacheDataElseLoad, timeoutInterval: 3)
+                let request = URLRequest(url: url,
+                                         cachePolicy: URLRequest.CachePolicy.returnCacheDataElseLoad,
+                                         timeoutInterval: 3
+                )
                 
-                let dataTask = URLSession.shared.dataTask(with: request) {
-                    [weak self] data, response, error in
+                let dataTask = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
                     
                     guard error == nil,
                           data != nil,

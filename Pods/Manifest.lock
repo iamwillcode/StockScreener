@@ -8,11 +8,13 @@ PODS:
   - RealmSwift (10.7.5):
     - Realm (= 10.7.5)
   - SkeletonView (1.15.0)
+  - SwiftLint (0.43.1)
 
 DEPENDENCIES:
-  - Charts
-  - RealmSwift
-  - SkeletonView
+  - Charts (= 3.6.0)
+  - RealmSwift (= 10.7.5)
+  - SkeletonView (= 1.15.0)
+  - SwiftLint
 
 SPEC REPOS:
   trunk:
@@ -20,13 +22,15 @@ SPEC REPOS:
     - Realm
     - RealmSwift
     - SkeletonView
+    - SwiftLint
 
 SPEC CHECKSUMS:
   Charts: b1e3a1f5a1c9ba5394438ca3b91bd8c9076310af
   Realm: 06f5c67f87cb8c5f27b122218ce22e9a77314517
   RealmSwift: b46535b52e69b9ed33912f0fcb3182ab0a5743ee
   SkeletonView: cac18a3ac4f893b09d99e65072d806ef08377aae
+  SwiftLint: 99f82d07b837b942dd563c668de129a03fc3fb52
 
-PODFILE CHECKSUM: e5a20e9415beab67514f44d808a2b111ecb35f44
+PODFILE CHECKSUM: c8818a4049e424fdf98c82c80cf99d7d0f22e258
 
 COCOAPODS: 1.10.1

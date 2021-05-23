@@ -1,6 +1,6 @@
 import UIKit
 
-struct K {
+struct Constants {
     
     static let defaultLogo = "StockDefaultLogo"
     

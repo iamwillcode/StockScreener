@@ -15,22 +15,22 @@ struct StockNewsModel {
         let timeDifference = currentTimestamp - timestampInSeconds
         
         switch timeDifference {
-        case 0..<K.TimeInSeconds.minute:
+        case 0..<Constants.TimeInSeconds.minute:
             return "\(timeDifference)s"
-        case 0..<K.TimeInSeconds.hour:
-            let minutes = timeDifference / K.TimeInSeconds.minute
+        case 0..<Constants.TimeInSeconds.hour:
+            let minutes = timeDifference / Constants.TimeInSeconds.minute
             return "\(minutes)min"
-        case 0..<K.TimeInSeconds.day:
-            let hours = timeDifference / K.TimeInSeconds.hour
+        case 0..<Constants.TimeInSeconds.day:
+            let hours = timeDifference / Constants.TimeInSeconds.hour
             return "\(hours)h"
-        case 0..<K.TimeInSeconds.month:
-            let days = timeDifference / K.TimeInSeconds.day
+        case 0..<Constants.TimeInSeconds.month:
+            let days = timeDifference / Constants.TimeInSeconds.day
             return "\(days)d"
-        case 0..<K.TimeInSeconds.year:
-            let months = timeDifference / K.TimeInSeconds.month
+        case 0..<Constants.TimeInSeconds.year:
+            let months = timeDifference / Constants.TimeInSeconds.month
             return "\(months)m"
-        case K.TimeInSeconds.year...:
-            let years = timeDifference / K.TimeInSeconds.year
+        case Constants.TimeInSeconds.year...:
+            let years = timeDifference / Constants.TimeInSeconds.year
             return "\(years)y"
         default:
             return "some time"

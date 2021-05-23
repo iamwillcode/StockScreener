@@ -9,7 +9,7 @@ final class StockFavourite {
         return instance
     }()
     
-    let realm = try! Realm()
+    let realm = try! Realm() // swiftlint:disable:this force_try
     
     private init() {}
     
@@ -17,7 +17,7 @@ final class StockFavourite {
     
     private var favouriteStocks = [String: StockModel]()
     
-    private let queue = K.Queues.favouriteStocksAccess
+    private let queue = Constants.Queues.favouriteStocksAccess
     
     func getFavourite() -> [String: StockModel] {
         var safeFavouriteStocks = [String: StockModel]()
@@ -52,27 +52,24 @@ final class StockFavourite {
     
     func checkIfTickerIsFavourite(stock: StockModel, completion: @escaping (Bool) -> Void) {
         let ticker = stock.ticker
-        queue.sync {
-            if self.favouriteStocks[ticker] != nil {
-                completion(true)
-            } else {
-                completion(false)
-            }
+        let stocks = getFavourite()
+        
+        if stocks[ticker] != nil {
+            completion(true)
+        } else {
+            completion(false)
         }
     }
 }
 
-//MARK: - Realm CRUD methods
+// MARK: - Realm CRUD methods
 
 extension StockFavourite {
     /// Converts Realm objects to the Stock Model objects
     func loadFavouriteFromRealm() {
-        var safeFavouriteStocks = [String: StockModel]()
-        
         let allObjects = realm.objects(StockObject.self)
         
         for object in allObjects {
-            let key = object.key
             if let value = object.value {
                 let ticker = value.ticker
                 let companyName = value.companyName
@@ -88,13 +85,16 @@ extension StockFavourite {
                 }
                 
                 group.notify(queue: DispatchQueue.main) {
-                    let stock = StockModel(ticker: ticker, companyName: companyName, logo: logo, isFavourite: isFavourite)
-                    safeFavouriteStocks[key] = stock
-                    self.queue.sync {
-                        self.favouriteStocks = safeFavouriteStocks
-                    }
+                    let stock = StockModel(
+                        ticker: ticker,
+                        companyName: companyName,
+                        logo: logo,
+                        isFavourite: isFavourite
+                    )
+                    self.updateFavourite(stock: stock)
                 }
             } else {
+                // swiftlint:disable:next force_try
                 try! realm.write {
                     realm.delete(object)
                 }
@@ -115,6 +115,7 @@ extension StockFavourite {
         
         tickerObject.value = valueObject
         
+        // swiftlint:disable:next force_try
         try! realm.write {
             realm.add(tickerObject, update: .modified)
         }
@@ -127,6 +128,7 @@ extension StockFavourite {
         let stockObject = realm.object(ofType: StockObject.self, forPrimaryKey: ticker)
         let valueObject = realm.object(ofType: StockModelObject.self, forPrimaryKey: ticker)
         
+        // swiftlint:disable:next force_try
         try! realm.write {
             guard let key = stockObject,
                   let value = valueObject else { return }

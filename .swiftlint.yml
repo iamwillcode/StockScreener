@@ -1,0 +1,14 @@
+disabled_rules:
+  - trailing_whitespace
+  - nesting
+
+excluded:
+  - Pods
+
+cyclomatic_complexity:
+  ignores_case_statements: true
+  
+file_length:
+  warning: 500
+  ignore_comment_only_lines: true
+

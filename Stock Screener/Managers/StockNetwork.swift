@@ -1,6 +1,5 @@
 import Foundation
 
-
 struct StockNetwork {
     
     /// Performs request to specified URL and serializes JSON
@@ -14,8 +13,7 @@ struct StockNetwork {
         
         let request = URLRequest(url: url, timeoutInterval: 15)
         
-        let task = URLSession.shared.dataTask(with: request) {
-            (data, response, error) in
+        let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
             
             if error != nil {
                 result = .failure(.sessionTaskError(error))
@@ -46,4 +44,3 @@ struct StockNetwork {
         return result
     }
 }
-

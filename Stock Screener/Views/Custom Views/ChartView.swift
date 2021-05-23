@@ -26,8 +26,8 @@ final class ChartView: LineChartView {
             let highlight = self.getHighlightByTouchPoint(position)
             let entry = self.getEntryByTouchPoint(point: position)
             
-            guard let h = highlight,
-                  let e = entry else { return }
+            guard let h = highlight, // swiftlint:disable:this identifier_name
+                  let e = entry else { return } // swiftlint:disable:this identifier_name
             
             highlightValue(h)
             
