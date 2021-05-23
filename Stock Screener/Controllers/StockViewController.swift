@@ -238,11 +238,13 @@ class StockViewController: UIViewController {
         
         selectedStock.isFavourite.toggle()
         
-        updateTrendingStocks(stock: selectedStock)
-        
         selectedStock.isFavourite
             ? StockFavourite.shared.addToFavourite(stock: selectedStock)
             : StockFavourite.shared.removeFromFavourite(stock: selectedStock)
+        
+        if selectedSegment == .trending {
+            updateTrendingStocks(stock: selectedStock)
+        }
         
         reloadTableView()
     }
