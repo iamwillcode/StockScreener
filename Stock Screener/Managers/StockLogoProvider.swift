@@ -13,7 +13,7 @@ class StockLogoProvider {
             DispatchQueue.global(qos: .utility).async {
                 let request = URLRequest(url: url,
                                          cachePolicy: URLRequest.CachePolicy.returnCacheDataElseLoad,
-                                         timeoutInterval: 3
+                                         timeoutInterval: 5
                 )
                 
                 let dataTask = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in

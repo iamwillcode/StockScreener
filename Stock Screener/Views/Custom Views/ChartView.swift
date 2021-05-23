@@ -9,7 +9,6 @@ final class ChartView: LineChartView {
         addTapRecognizer()
     }
     
-
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         addTapRecognizer()
