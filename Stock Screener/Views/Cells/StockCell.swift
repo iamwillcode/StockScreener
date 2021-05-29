@@ -41,18 +41,18 @@ final class StockCell: UITableViewCell {
     private func setupUI() {
         // Self
         self.translatesAutoresizingMaskIntoConstraints = false
-        self.backgroundColor = Constants.Colors.Background.secondary
+        self.backgroundColor = UIColor.Custom.Background.secondary
         
         // Cell View
         cellView.layer.cornerRadius = 12
         cellView.layer.masksToBounds = true
-        cellView.backgroundColor = Constants.Colors.Background.main
+        cellView.backgroundColor = UIColor.Custom.Background.main
         
         // Labels
-        ticker.textColor = Constants.Colors.Text.ternary
-        companyName.textColor = Constants.Colors.Text.ternary
-        currentPrice.textColor = Constants.Colors.Text.ternary
-        dayDelta.textColor = Constants.Colors.Text.ternary
+        ticker.textColor = UIColor.Custom.Text.ternary
+        companyName.textColor = UIColor.Custom.Text.ternary
+        currentPrice.textColor = UIColor.Custom.Text.ternary
+        dayDelta.textColor = UIColor.Custom.Text.ternary
         
         // Image View
         companyLogo.layer.cornerRadius = 12
@@ -64,7 +64,7 @@ final class StockCell: UITableViewCell {
         // Selection style of the cell
         selectedBackgroundView = {
             let view = UIView.init()
-            view.backgroundColor = Constants.Colors.Text.secondary
+            view.backgroundColor = UIColor.Custom.Text.secondary
             return view
         }()
     }

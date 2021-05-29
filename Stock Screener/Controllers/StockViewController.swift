@@ -113,15 +113,15 @@ class StockViewController: UIViewController {
     
     private func setupUI() {
         // View
-        view.backgroundColor = Constants.Colors.Brand.main
+        view.backgroundColor = UIColor.Custom.Brand.main
         
         // Table View
         tableView.separatorStyle = .none
-        tableView.backgroundColor = Constants.Colors.Background.secondary
-        tableViewRefreshControl.tintColor = Constants.Colors.Brand.secondary
+        tableView.backgroundColor = UIColor.Custom.Background.secondary
+        tableViewRefreshControl.tintColor = UIColor.Custom.Brand.secondary
         
         // Segments View
-        segmentsView.backgroundColor = Constants.Colors.Brand.main
+        segmentsView.backgroundColor = UIColor.Custom.Brand.main
         
         // Search Bar
         let searchBar = searchController.searchBar
@@ -129,35 +129,35 @@ class StockViewController: UIViewController {
         
         // Search Text Field
         let searchTextField = searchBar.searchTextField
-        searchTextField.backgroundColor = Constants.Colors.Brand.main
-        searchTextField.textColor = Constants.Colors.Text.main
+        searchTextField.backgroundColor = UIColor.Custom.Brand.main
+        searchTextField.textColor = UIColor.Custom.Text.main
         searchTextField.attributedPlaceholder = NSAttributedString(
             string: "Ticker or company name",
-            attributes: [NSAttributedString.Key.foregroundColor: Constants.Colors.Text.secondary]
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.Custom.Text.secondary]
         )
         
         if let glassIconView = searchTextField.leftView as? UIImageView {
             glassIconView.image = glassIconView.image?.withRenderingMode(.alwaysTemplate)
-            glassIconView.tintColor = Constants.Colors.Text.main
+            glassIconView.tintColor = UIColor.Custom.Text.main
         }
         
         if let clearButton = searchTextField.value(forKey: "_clearButton") as? UIButton {
             let templateImage =  clearButton.imageView?.image?.withRenderingMode(.alwaysTemplate)
             clearButton.setImage(templateImage, for: .normal)
-            clearButton.tintColor = Constants.Colors.Text.main
+            clearButton.tintColor = UIColor.Custom.Text.main
         }
         
         // Navigation Controller
         if let navigationBar = navigationController?.navigationBar {
-            navigationBar.tintColor = Constants.Colors.Text.main
+            navigationBar.tintColor = UIColor.Custom.Text.main
             navigationBar.prefersLargeTitles = true
             navigationBar.barStyle = .black
         }
         
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = Constants.Colors.Brand.main
-        appearance.largeTitleTextAttributes = [.foregroundColor: Constants.Colors.Text.main]
+        appearance.backgroundColor = UIColor.Custom.Brand.main
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.Custom.Text.main]
         appearance.shadowColor = .none
         navigationItem.standardAppearance = appearance
         navigationItem.scrollEdgeAppearance = appearance
@@ -176,10 +176,10 @@ class StockViewController: UIViewController {
         
         if title.text == selectedSegment.rawValue {
             title.font = UIFont.boldSystemFont(ofSize: 20)
-            button.setTitleColor(Constants.Colors.Text.main, for: .normal)
+            button.setTitleColor(UIColor.Custom.Text.main, for: .normal)
         } else {
             title.font = UIFont.systemFont(ofSize: 16)
-            button.setTitleColor(Constants.Colors.Text.secondary, for: .normal)
+            button.setTitleColor(UIColor.Custom.Text.secondary, for: .normal)
         }
     }
     
@@ -190,7 +190,7 @@ class StockViewController: UIViewController {
     
     private func setupSkeleton() {
         tableView.isSkeletonable = true
-        let gradient = SkeletonGradient(baseColor: Constants.Colors.Background.secondary)
+        let gradient = SkeletonGradient(baseColor: UIColor.Custom.Background.secondary)
         let animation = GradientDirection.leftRight.slidingAnimation()
         tableView.showAnimatedGradientSkeleton(usingGradient: gradient, animation: animation)
     }
@@ -327,11 +327,11 @@ extension StockViewController: UITableViewDataSource {
         // Setup delta text color depending on it's value
         if let delta = stockItem.delta {
             if delta >= 0 {
-                cell.dayDelta.textColor = Constants.Colors.Common.green
+                cell.dayDelta.textColor = UIColor.Custom.Common.green
             } else if delta < 0 {
-                cell.dayDelta.textColor = Constants.Colors.Common.red
+                cell.dayDelta.textColor = UIColor.Custom.Common.red
             } else {
-                cell.dayDelta.textColor = Constants.Colors.Text.ternary
+                cell.dayDelta.textColor = UIColor.Custom.Text.ternary
             }
         }
         
@@ -358,11 +358,11 @@ extension StockViewController: UITableViewDataSource {
         // Setup favourite button image
         if stockItem.isFavourite {
             let image = UIImage(systemName: "star.fill")!
-                .withTintColor(Constants.Colors.Common.isFavourite, renderingMode: .alwaysOriginal)
+                .withTintColor(UIColor.Custom.Common.isFavourite, renderingMode: .alwaysOriginal)
             cell.favouriteButton.setImage(image, for: .normal)
         } else {
             let image = UIImage(systemName: "star.fill")!
-                .withTintColor(Constants.Colors.Common.notFavourite, renderingMode: .alwaysOriginal)
+                .withTintColor(UIColor.Custom.Common.notFavourite, renderingMode: .alwaysOriginal)
             cell.favouriteButton.setImage(image, for: .normal)
         }
         

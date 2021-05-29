@@ -74,9 +74,9 @@ class ResultsTableController: UITableViewController {
         // Setup delta text color depending on it's value
         if let delta = stockItem.delta {
             if delta >= 0 {
-                cell.dayDelta.textColor = Constants.Colors.Common.green
+                cell.dayDelta.textColor = UIColor.Custom.Common.green
             } else if delta < 0 {
-                cell.dayDelta.textColor = Constants.Colors.Common.red
+                cell.dayDelta.textColor = UIColor.Custom.Common.red
             } else {
                 cell.dayDelta.textColor = .black
             }
@@ -103,11 +103,11 @@ class ResultsTableController: UITableViewController {
         // Setup favourite button image
         if stockItem.isFavourite {
             let image = UIImage(systemName: "star.fill")!
-                .withTintColor(Constants.Colors.Common.isFavourite, renderingMode: .alwaysOriginal)
+                .withTintColor(UIColor.Custom.Common.isFavourite, renderingMode: .alwaysOriginal)
             cell.favouriteButton.setImage(image, for: .normal)
         } else {
             let image = UIImage(systemName: "star.fill")!
-                .withTintColor(Constants.Colors.Common.notFavourite, renderingMode: .alwaysOriginal)
+                .withTintColor(UIColor.Custom.Common.notFavourite, renderingMode: .alwaysOriginal)
             cell.favouriteButton.setImage(image, for: .normal)
         }
         
@@ -169,7 +169,7 @@ class ResultsTableController: UITableViewController {
     private func setupUI() {
         // Table View
         tableView.separatorStyle = .none
-        tableView.backgroundColor = Constants.Colors.Background.secondary
+        tableView.backgroundColor = UIColor.Custom.Background.secondary
         
         // Navigation Controller
         if let navigationBar = navigationController?.navigationBar {
@@ -178,7 +178,7 @@ class ResultsTableController: UITableViewController {
         
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = Constants.Colors.Background.main
+        appearance.backgroundColor = UIColor.Custom.Background.main
         navigationItem.standardAppearance = appearance
         navigationItem.scrollEdgeAppearance = appearance
     }

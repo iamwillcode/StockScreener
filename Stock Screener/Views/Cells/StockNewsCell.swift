@@ -20,11 +20,11 @@ class StockNewsCell: UITableViewCell {
     // MARK: - Private methods
     
     private func setupUI() {
-        self.backgroundColor = Constants.Colors.Background.secondary
+        self.backgroundColor = UIColor.Custom.Background.secondary
         
         selectedBackgroundView = {
             let view = UIView.init()
-            view.backgroundColor = Constants.Colors.Text.secondary
+            view.backgroundColor = UIColor.Custom.Text.secondary
             return view
         }()
     }

@@ -27,7 +27,7 @@ final class StockChartCell: UITableViewCell {
         chartView.setScaleEnabled(false)
         chartView.noDataText = "There is no data for the chosen period"
         chartView.noDataFont = UIFont.systemFont(ofSize: 20, weight: .semibold)
-        chartView.noDataTextColor = Constants.Colors.Text.ternary
+        chartView.noDataTextColor = UIColor.Custom.Text.ternary
         return chartView
     }()
     
@@ -139,9 +139,9 @@ final class StockChartCell: UITableViewCell {
             var chartColor: UIColor {
                 let lastPrice = entries[entries.count - 1].y
                 if lastPrice >= median {
-                    return Constants.Colors.Common.green
+                    return UIColor.Custom.Common.green
                 } else {
-                    return Constants.Colors.Common.red
+                    return UIColor.Custom.Common.red
                 }
             }
             
@@ -151,15 +151,15 @@ final class StockChartCell: UITableViewCell {
             chartDataSet.mode = .cubicBezier
             chartDataSet.lineWidth = 3
             chartDataSet.setColor(chartColor)
-            let gradientColors = [Constants.Colors.Background.secondary.cgColor, chartColor.cgColor]
+            let gradientColors = [UIColor.Custom.Background.secondary.cgColor, chartColor.cgColor]
             let gradient = CGGradient(colorsSpace: nil, colors: gradientColors as CFArray, locations: nil)!
             chartDataSet.fill = Fill(linearGradient: gradient, angle: 90)
             chartDataSet.fillAlpha = 0.5
             chartDataSet.drawFilledEnabled = true
             chartDataSet.drawHorizontalHighlightIndicatorEnabled = false
-            chartDataSet.highlightColor = Constants.Colors.Brand.secondary
+            chartDataSet.highlightColor = UIColor.Custom.Brand.secondary
             chartDataSet.highlightLineWidth = 2
-            chartDataSet.valueTextColor = Constants.Colors.Text.ternary
+            chartDataSet.valueTextColor = UIColor.Custom.Text.ternary
             
             // Setup Chart Data
             let data = LineChartData(dataSet: chartDataSet)
@@ -198,19 +198,19 @@ final class StockChartCell: UITableViewCell {
     
     private func setupUI() {
         // Self
-        self.backgroundColor = Constants.Colors.Background.secondary
+        self.backgroundColor = UIColor.Custom.Background.secondary
         
         // Labels
-        priceLabel.textColor = Constants.Colors.Text.ternary
-        dateLabel.textColor = Constants.Colors.Text.quaternary
+        priceLabel.textColor = UIColor.Custom.Text.ternary
+        dateLabel.textColor = UIColor.Custom.Text.quaternary
         priceLabel.font = UIFont.systemFont(ofSize: 20, weight: .bold)
         dateLabel.font = UIFont.systemFont(ofSize: 18, weight: .light)
         
         // Period Segmented Control
-        periodSegmentedControl.backgroundColor = Constants.Colors.Background.secondary
-        periodSegmentedControl.selectedSegmentTintColor = Constants.Colors.Brand.secondary
-        periodSegmentedControl.setTitleTextAttributes([.foregroundColor: Constants.Colors.Text.ternary], for: .normal)
-        periodSegmentedControl.setTitleTextAttributes([.foregroundColor: Constants.Colors.Text.main], for: .selected)
+        periodSegmentedControl.backgroundColor = UIColor.Custom.Background.secondary
+        periodSegmentedControl.selectedSegmentTintColor = UIColor.Custom.Brand.secondary
+        periodSegmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.Custom.Text.ternary], for: .normal)
+        periodSegmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.Custom.Text.main], for: .selected)
         periodSegmentedControl.isHidden = true
         
         // Selection style of the cell

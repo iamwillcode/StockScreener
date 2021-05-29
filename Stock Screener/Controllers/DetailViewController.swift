@@ -68,11 +68,11 @@ class DetailViewController: UIViewController {
         
         if let delta = detailedStock.delta {
             if delta >= 0 {
-                dayDelta.textColor = Constants.Colors.Common.green
+                dayDelta.textColor = UIColor.Custom.Common.green
             } else if delta < 0 {
-                dayDelta.textColor = Constants.Colors.Common.red
+                dayDelta.textColor = UIColor.Custom.Common.red
             } else {
-                dayDelta.textColor = Constants.Colors.Text.ternary
+                dayDelta.textColor = UIColor.Custom.Text.ternary
             }
         }
     }
@@ -89,12 +89,12 @@ class DetailViewController: UIViewController {
     
     private func setupUI() {
         // Title View
-        titleView.backgroundColor = Constants.Colors.Brand.secondary
+        titleView.backgroundColor = UIColor.Custom.Brand.secondary
         
         // Labels
-        ticker.textColor = Constants.Colors.Text.main
-        companyName.textColor = Constants.Colors.Text.main
-        currentPrice.textColor = Constants.Colors.Text.main
+        ticker.textColor = UIColor.Custom.Text.main
+        companyName.textColor = UIColor.Custom.Text.main
+        currentPrice.textColor = UIColor.Custom.Text.main
         
         ticker.font = UIFont.systemFont(ofSize: 30, weight: .black)
         companyName.font = UIFont.systemFont(ofSize: 18, weight: .regular)
@@ -103,18 +103,18 @@ class DetailViewController: UIViewController {
         
         // Table View
         tableView.separatorStyle = .none
-        tableView.backgroundColor = Constants.Colors.Background.secondary
+        tableView.backgroundColor = UIColor.Custom.Background.secondary
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         // Navigation Controller
         if let navigationBar = navigationController?.navigationBar {
-            navigationBar.tintColor = Constants.Colors.Text.main
+            navigationBar.tintColor = UIColor.Custom.Text.main
             navigationBar.barStyle = .black
         }
         
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = Constants.Colors.Brand.main
+        appearance.backgroundColor = UIColor.Custom.Brand.main
         appearance.shadowColor = .none
         navigationItem.standardAppearance = appearance
         navigationItem.scrollEdgeAppearance = appearance
@@ -127,11 +127,11 @@ class DetailViewController: UIViewController {
     private func setupFavouriteButton() {
         if isFavourite {
             let image = UIImage(systemName: "star.fill")!
-                .withTintColor(Constants.Colors.Common.isFavourite, renderingMode: .alwaysOriginal)
+                .withTintColor(UIColor.Custom.Common.isFavourite, renderingMode: .alwaysOriginal)
             favouriteButton.setImage(image, for: .normal)
         } else {
             let image = UIImage(systemName: "star.fill")!
-                .withTintColor(Constants.Colors.Background.main, renderingMode: .alwaysOriginal)
+                .withTintColor(UIColor.Custom.Background.main, renderingMode: .alwaysOriginal)
             favouriteButton.setImage(image, for: .normal)
         }
         
