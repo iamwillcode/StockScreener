@@ -1,6 +1,6 @@
 import Foundation
 
-struct StockFormatter {
+final class StockFormatter {
     
     func formattedPrice(_ price: Double?) -> String {
         let formatter = NumberFormatter()

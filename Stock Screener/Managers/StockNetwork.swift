@@ -1,6 +1,6 @@
 import Foundation
 
-struct StockNetwork {
+final class StockNetwork {
     
     /// Performs request to specified URL and serializes JSON
     func performRequest<T: Codable>(with urlString: String) -> Result<T, StockError> {

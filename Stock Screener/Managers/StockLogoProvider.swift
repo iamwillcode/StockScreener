@@ -1,7 +1,7 @@
 import UIKit
 
 /// Use to download and cache logo for the ticker
-class StockLogoProvider {
+final class StockLogoProvider {
     
     var imageCache = NSCache<NSString, UIImage>()
     

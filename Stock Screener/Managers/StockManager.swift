@@ -6,7 +6,7 @@ protocol StockManagerDelegate: AnyObject {
     func didFailWithError(_ error: StockError)
 }
 
-struct StockManager {
+final class StockManager {
     
     weak var delegate: StockManagerDelegate?
     
@@ -19,7 +19,7 @@ struct StockManager {
         
         DispatchQueue.global(qos: .utility).async {
             
-            let result: Result<[StockData.Ticker], StockError> = stockNetwork.performRequest(with: URL)
+            let result: Result<[StockData.Ticker], StockError> = self.stockNetwork.performRequest(with: URL)
             
             DispatchQueue.main.async {
                 switch result {
@@ -33,7 +33,7 @@ struct StockManager {
                     }
                     
                     for element in stockData {
-                        buildStockItem(for: element.symbol, element.companyName, workload: stockData.count)
+                        self.buildStockItem(for: element.symbol, element.companyName, workload: stockData.count)
                     }
                 }
             }
@@ -46,7 +46,7 @@ struct StockManager {
         
         DispatchQueue.global(qos: .utility).async {
             
-            let result: Result<StockData.Search, StockError> = stockNetwork.performRequest(with: URL)
+            let result: Result<StockData.Search, StockError> = self.stockNetwork.performRequest(with: URL)
             
             DispatchQueue.main.async {
                 switch result {
@@ -68,7 +68,11 @@ struct StockManager {
                         }
                         
                         for element in filteredResult {
-                            buildStockItem(for: element.symbol, element.description, workload: filteredResult.count)
+                            self.buildStockItem(
+                                for: element.symbol,
+                                element.description,
+                                workload: filteredResult.count
+                            )
                         }
                     } else {
                         let error = StockError.searchError(ticker)
@@ -85,7 +89,7 @@ struct StockManager {
         
         DispatchQueue.global(qos: .utility).async {
             
-            let result: Result<StockData.Price, StockError> = stockNetwork.performRequest(with: URL)
+            let result: Result<StockData.Price, StockError> = self.stockNetwork.performRequest(with: URL)
             
             DispatchQueue.main.async {
                 switch result {
@@ -148,7 +152,7 @@ struct StockManager {
         
         DispatchQueue.global(qos: .utility).async {
             
-            let result: Result<StockData.ChartData, StockError> = stockNetwork.performRequest(with: URL)
+            let result: Result<StockData.ChartData, StockError> = self.stockNetwork.performRequest(with: URL)
             
             DispatchQueue.main.async {
                 switch result {
@@ -171,7 +175,7 @@ struct StockManager {
         
         DispatchQueue.global(qos: .utility).async {
             
-            let result: Result<[StockData.News], StockError> = stockNetwork.performRequest(with: URL)
+            let result: Result<[StockData.News], StockError> = self.stockNetwork.performRequest(with: URL)
             
             DispatchQueue.main.async {
                 switch result {
@@ -224,7 +228,7 @@ struct StockManager {
         
         group.enter()
         queue.async {
-            getLogo(for: ticker) { (image) in
+            self.getLogo(for: ticker) { (image) in
                 logo = image
                 group.leave()
             }
