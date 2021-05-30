@@ -32,12 +32,12 @@ final class StockModel {
     
     var formattedPrice: String? {
         guard currentPrice != 0 else { return "-" }
-        return formatter.formattedPrice(currentPrice)
+        return formatter.getFormattedPrice(currentPrice)
     }
     
     var formattedDayDelta: String? {
-        let formattedDelta = formatter.formattedDelta(delta)
-        let formattedPercentDelta = formatter.formattedPercentDelta(percentDelta)
+        let formattedDelta = formatter.getFormattedDelta(delta)
+        let formattedPercentDelta = formatter.getFormattedPercentDelta(percentDelta)
         
         guard formattedPercentDelta.count > 0 else { return formattedDelta }
         

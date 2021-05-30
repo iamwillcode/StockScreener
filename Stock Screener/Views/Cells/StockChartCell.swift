@@ -282,12 +282,12 @@ extension StockChartCell: ChartViewDelegate {
         let price = Double(highlight.y)
         let date = Double(highlight.x)
         
-        priceLabel.text = formatter.formattedPrice(price)
+        priceLabel.text = formatter.getFormattedPrice(price)
         
         if periodSegmentedControl.selectedSegmentIndex == 0 {
-            dateLabel.text = formatter.formattedDateAndTimeFromUnixTimestamp(date)
+            dateLabel.text = formatter.getFormattedDateAndTimeFromUnixTimestamp(date)
         } else {
-            dateLabel.text = formatter.formattedDateFromUnixTimestamp(date)
+            dateLabel.text = formatter.getFormattedDateFromUnixTimestamp(date)
         }
     }
     

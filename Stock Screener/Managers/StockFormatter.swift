@@ -2,7 +2,7 @@ import Foundation
 
 final class StockFormatter {
     
-    func formattedPrice(_ price: Double?) -> String {
+    func getFormattedPrice(_ price: Double?) -> String {
         let formatter = NumberFormatter()
         formatter.usesGroupingSeparator = true
         formatter.maximumFractionDigits = 2
@@ -14,7 +14,7 @@ final class StockFormatter {
         return formattedPrice
     }
     
-    func formattedDelta(_ delta: Double?) -> String {
+    func getFormattedDelta(_ delta: Double?) -> String {
         let formatter = NumberFormatter()
         formatter.positivePrefix = "+"
         formatter.usesGroupingSeparator = true
@@ -29,7 +29,7 @@ final class StockFormatter {
         return formattedDelta
     }
     
-    func formattedPercentDelta(_ percentDelta: Double?) -> String {
+    func getFormattedPercentDelta(_ percentDelta: Double?) -> String {
         var formattedPercentDelta = ""
         
         // swiftlint:disable:next identifier_name
@@ -44,7 +44,7 @@ final class StockFormatter {
         return formattedPercentDelta
     }
     
-    func formattedDateFromUnixTimestamp(_ timestamp: Double) -> String {
+    func getFormattedDateFromUnixTimestamp(_ timestamp: Double) -> String {
         let date = Date(timeIntervalSince1970: timestamp)
         let formatter = DateFormatter()
         formatter.dateFormat = "d MMMM YYYY"
@@ -52,7 +52,7 @@ final class StockFormatter {
         return formattedDate
     }
     
-    func formattedDateAndTimeFromUnixTimestamp(_ timestamp: Double) -> String {
+    func getFormattedDateAndTimeFromUnixTimestamp(_ timestamp: Double) -> String {
         let date = Date(timeIntervalSince1970: timestamp)
         let formatter = DateFormatter()
         formatter.dateFormat = "d MMMM YYYY, HH:mm"
