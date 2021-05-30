@@ -34,8 +34,8 @@
 		84A78503260A6BD6000E3FDE /* StockError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A78502260A6BD6000E3FDE /* StockError.swift */; };
 		84A78507260A7E8A000E3FDE /* StockModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A78506260A7E8A000E3FDE /* StockModel.swift */; };
 		84C719392610EEC10000D0C2 /* StockFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C719382610EEC10000D0C2 /* StockFormatter.swift */; };
-		84CCA48F2663EFF300AAFB5B /* TimestampFormatter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84CCA4882663ED5400AAFB5B /* TimestampFormatter.framework */; };
-		84CCA4902663EFF300AAFB5B /* TimestampFormatter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84CCA4882663ED5400AAFB5B /* TimestampFormatter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		84CCD0882663F47900AAFB5B /* TimestampFormatter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84CCD0872663F46400AAFB5B /* TimestampFormatter.framework */; };
+		84CCD0892663F47900AAFB5B /* TimestampFormatter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84CCD0872663F46400AAFB5B /* TimestampFormatter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84D2C45F2618C49F0031B14A /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D2C45E2618C49F0031B14A /* Config.swift */; };
 		84D71B0E261B728000D4EC9C /* StockChartCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D71B0C261B728000D4EC9C /* StockChartCell.swift */; };
 		84E083C5265AD98000D2A096 /* UIColor+Custom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E083C4265AD98000D2A096 /* UIColor+Custom.swift */; };
@@ -59,6 +59,13 @@
 			remoteGlobalIDString = 84A784A825FE87CC000E3FDE;
 			remoteInfo = "Stock Screener";
 		};
+		84CCD0862663F46400AAFB5B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 84CCD0822663F46400AAFB5B /* TimestampFormatter.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 84CCA4782663EBE800AAFB5B;
+			remoteInfo = TimestampFormatter;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -68,7 +75,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				84CCA4902663EFF300AAFB5B /* TimestampFormatter.framework in Embed Frameworks */,
+				84CCD0892663F47900AAFB5B /* TimestampFormatter.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -110,7 +117,7 @@
 		84A78502260A6BD6000E3FDE /* StockError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockError.swift; sourceTree = "<group>"; };
 		84A78506260A7E8A000E3FDE /* StockModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockModel.swift; sourceTree = "<group>"; };
 		84C719382610EEC10000D0C2 /* StockFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockFormatter.swift; sourceTree = "<group>"; };
-		84CCA4882663ED5400AAFB5B /* TimestampFormatter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = TimestampFormatter.framework; sourceTree = "<group>"; };
+		84CCD0822663F46400AAFB5B /* TimestampFormatter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TimestampFormatter.xcodeproj; path = ../TimestampFormatter/TimestampFormatter.xcodeproj; sourceTree = "<group>"; };
 		84D2C45E2618C49F0031B14A /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		84D71B0C261B728000D4EC9C /* StockChartCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockChartCell.swift; sourceTree = "<group>"; };
 		84E083C4265AD98000D2A096 /* UIColor+Custom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Custom.swift"; sourceTree = "<group>"; };
@@ -139,7 +146,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				84CCA48F2663EFF300AAFB5B /* TimestampFormatter.framework in Frameworks */,
+				84CCD0882663F47900AAFB5B /* TimestampFormatter.framework in Frameworks */,
 				CC0A2A0088BE624E0268E05A /* Pods_Stock_Screener.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -159,7 +166,6 @@
 		64C17B448BE3AAD9EA3D9980 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				84CCA4872663ED5400AAFB5B /* Frameworks */,
 				F0361BC0E9663F07EBD64A92 /* Pods_Stock_Screener.framework */,
 			);
 			name = Frameworks;
@@ -228,6 +234,7 @@
 		84A784A025FE87CC000E3FDE = {
 			isa = PBXGroup;
 			children = (
+				84CCD0822663F46400AAFB5B /* TimestampFormatter.xcodeproj */,
 				84A784AB25FE87CC000E3FDE /* Stock Screener */,
 				848FF2062655AE55000B20FF /* Stock Screener UITests */,
 				848FF2142655AE6B000B20FF /* Stock Screener Tests */,
@@ -299,12 +306,12 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		84CCA4872663ED5400AAFB5B /* Frameworks */ = {
+		84CCD0832663F46400AAFB5B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				84CCA4882663ED5400AAFB5B /* TimestampFormatter.framework */,
+				84CCD0872663F46400AAFB5B /* TimestampFormatter.framework */,
 			);
-			path = Frameworks;
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -400,6 +407,12 @@
 			mainGroup = 84A784A025FE87CC000E3FDE;
 			productRefGroup = 84A784AA25FE87CC000E3FDE /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 84CCD0832663F46400AAFB5B /* Products */;
+					ProjectRef = 84CCD0822663F46400AAFB5B /* TimestampFormatter.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				84A784A825FE87CC000E3FDE /* Stock Screener */,
@@ -408,6 +421,16 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		84CCD0872663F46400AAFB5B /* TimestampFormatter.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = TimestampFormatter.framework;
+			remoteRef = 84CCD0862663F46400AAFB5B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		848FF2032655AE55000B20FF /* Resources */ = {
