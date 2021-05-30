@@ -98,7 +98,7 @@ final class StockManager {
                 case .success(let stockData):
                     if let currentPrice = stockData.c,
                        let previousPrice = stockData.pc {
-                        var updatedStock = stock
+                        let updatedStock = stock
                         updatedStock.currentPrice = currentPrice
                         updatedStock.previousPrice = previousPrice
                         self.delegate?.didUpdateStockItem(updatedStock, segment: segment)

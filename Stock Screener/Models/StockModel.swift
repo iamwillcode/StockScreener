@@ -1,11 +1,11 @@
 import UIKit
 
-struct StockModel {
+final class StockModel {
     
     let ticker: String
     let companyName: String
     var logo: UIImage?
-    var isFavourite: Bool = false
+    var isFavourite: Bool
     var currentPrice: Double?
     var previousPrice: Double?
     
@@ -21,6 +21,16 @@ struct StockModel {
         return (cPrice - pPrice) / pPrice
     }
     
+    init (ticker: String, companyName: String, logo: UIImage?) {
+        self.ticker = ticker
+        self.companyName = companyName
+        self.logo = logo
+        self.isFavourite = false
+        self.currentPrice = nil
+        self.previousPrice = nil
+    }
+    
+    // Formatted properties
     private let formatter = StockFormatter()
     
     var formattedPrice: String? {

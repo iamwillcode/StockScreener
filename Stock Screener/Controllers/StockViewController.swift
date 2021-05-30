@@ -223,7 +223,7 @@ class StockViewController: UIViewController {
             guard let strongSelf = self else { return }
             
             if stock.isFavourite != result {
-                var updatedStock = stock
+                let updatedStock = stock
                 
                 updatedStock.isFavourite.toggle()
                 strongSelf.updateTrendingStocks(stock: updatedStock)
@@ -234,7 +234,7 @@ class StockViewController: UIViewController {
     }
     
     private func toggleFavourite(for stock: StockModel) {
-        var selectedStock = stock
+        let selectedStock = stock
         
         selectedStock.isFavourite.toggle()
         
@@ -426,7 +426,7 @@ extension StockViewController: StockManagerDelegate {
         case .tickerPriceError(let ticker):
             print(error.localizedDescription)
             let stocks = getTrendingStocks()
-            var stock = stocks[ticker]
+            let stock = stocks[ticker]
             
             guard stock != nil else { return }
             

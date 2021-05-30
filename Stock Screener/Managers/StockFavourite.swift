@@ -88,9 +88,9 @@ extension StockFavourite {
                     let stock = StockModel(
                         ticker: ticker,
                         companyName: companyName,
-                        logo: logo,
-                        isFavourite: isFavourite
+                        logo: logo
                     )
+                    stock.isFavourite = isFavourite
                     self.updateFavourite(stock: stock)
                 }
             } else {

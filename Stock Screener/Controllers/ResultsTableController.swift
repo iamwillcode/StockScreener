@@ -228,7 +228,7 @@ class ResultsTableController: UITableViewController {
             guard let strongSelf = self else { return }
             
             if stock.isFavourite != result {
-                var updatedStock = stock
+                let updatedStock = stock
                 
                 updatedStock.isFavourite.toggle()
                 strongSelf.updateSearchResultStocks(stock: updatedStock)
@@ -239,7 +239,7 @@ class ResultsTableController: UITableViewController {
     }
     
     private func toggleFavourite(for stock: StockModel) {
-        var selectedStock = stock
+        let selectedStock = stock
         
         selectedStock.isFavourite.toggle()
         
@@ -283,7 +283,7 @@ extension ResultsTableController: StockManagerDelegate {
         case .tickerPriceError(let ticker):
             print(error.localizedDescription)
             let stocks = getSearchResultStocks()
-            var stock = stocks[ticker]
+            let stock = stocks[ticker]
             
             guard stock != nil else { return }
             
