@@ -5,7 +5,7 @@ final class StockModel {
     let ticker: String
     let companyName: String
     var logo: UIImage?
-    var isFavourite: Bool
+    var isFavourite: Bool = false
     var currentPrice: Double?
     var previousPrice: Double?
     
@@ -25,9 +25,6 @@ final class StockModel {
         self.ticker = ticker
         self.companyName = companyName
         self.logo = logo
-        self.isFavourite = false
-        self.currentPrice = nil
-        self.previousPrice = nil
     }
     
     // Formatted properties
