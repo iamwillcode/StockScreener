@@ -1,0 +1,11 @@
+framework module TimestampFormatter {
+  umbrella header "TimestampFormatter.h"
+
+  export *
+  module * { export * }
+}
+
+module TimestampFormatter.Swift {
+    header "TimestampFormatter-Swift.h"
+    requires objc
+}
