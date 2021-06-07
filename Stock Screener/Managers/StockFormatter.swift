@@ -26,7 +26,6 @@ final class StockFormatter {
               d != 0 else { return "" }
         
         let formattedDelta = formatter.string(from: NSNumber(value: d)) ?? ""
-
         return formattedDelta
     }
     
